@@ -1,0 +1,41 @@
+:root{font-family:system-ui,Tahoma,sans-serif;background:#f4f7fc;color:#142d46}*{box-sizing:border-box}body{margin:0}header{background:#102c4e;color:white;display:flex;justify-content:space-between;align-items:center;padding:20px max(20px,calc((100vw - 1180px)/2))}header strong{font-size:23px}header span{display:block;color:#aec6e6;font-size:13px}header a{color:white}main{max-width:1180px;margin:auto;padding:24px}h1{font-size:28px}.intro,.hint{color:#60758c;line-height:1.8}.hint{font-size:13px}.panel{background:white;padding:24px;border:1px solid #e0e7f2;border-radius:16px;margin:18px 0;box-shadow:0 7px 25px #122f4d08}.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}.cols .panel{margin:0}form{display:grid;gap:12px}label{font-size:14px;font-weight:600}input,select{display:block;width:100%;padding:12px;margin-top:6px;border:1px solid #c8d7e7;border-radius:9px;font:inherit}button{font:inherit;border:0;border-radius:10px;padding:12px;background:#1667b2;color:white;cursor:pointer}table{border-collapse:collapse;width:100%;overflow-x:auto;display:block}td,th{padding:13px;border-bottom:1px solid #e4eaf3;text-align:right;white-space:nowrap}th{color:#57718a}#message{padding:10px;color:#14683f}#message.error{color:#a52222}@media(max-width:780px){.cols{grid-template-columns:1fr}}
+
+header nav{display:flex;align-items:center;gap:10px}
+header nav button{background:#ffffff19;color:#fff;border:1px solid #8a9cb6;padding:8px 12px}
+header nav button[aria-pressed="true"]{background:white;color:#102b55}
+html[dir="ltr"] td,html[dir="ltr"] th{text-align:left}
+html[dir="rtl"] td,html[dir="rtl"] th{text-align:right}
+input[name=code],input[name=slug],input[name=referralPrefix],input[type=date],input[type=number],
+#reportTable td:nth-child(2){direction:ltr;unicode-bidi:isolate;text-align:left}
+html[dir="rtl"] input[name=code],html[dir="rtl"] input[name=slug],html[dir="rtl"] input[name=referralPrefix]{text-align:left}
+#campaignList,#reportTable{max-width:100%;overflow:auto}
+#campaignList td:nth-child(3),#campaignList td:nth-child(7){direction:ltr;unicode-bidi:isolate;text-align:left}
+html[lang="en"] .hint{line-height:1.65}
+
+
+.a1-opps-brand{display:inline-flex;align-items:center;gap:6px;direction:ltr;vertical-align:middle;max-width:100%;flex-shrink:0}
+.a1-opps-brand img{display:block;object-fit:contain;max-width:100%}
+.a1-opps-brand .a1-opps-mark{width:clamp(39px,4.5vw,55px);height:auto;aspect-ratio:378/245}
+.a1-opps-brand .a1-opps-label{width:clamp(120px,13vw,173px);height:auto;aspect-ratio:420/72}
+@media(max-width:540px){.a1-opps-brand{gap:3px}.a1-opps-brand .a1-opps-mark{width:37px}.a1-opps-brand .a1-opps-label{width:118px}}
+
+
+.admin-process{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:10px 0 20px}
+.admin-process>div{background:white;border:1px solid #dfe8f2;border-radius:12px;padding:16px;display:grid;gap:5px}
+.admin-process strong{color:#102b55;font-size:14px}.admin-process small{font-size:12px;color:#677e95}
+textarea{width:100%;border:1px solid #c8d7e7;border-radius:9px;padding:12px;margin-top:6px;font:inherit;resize:vertical}
+button:disabled{opacity:.55;cursor:not-allowed}
+.panel h2{margin:0 0 14px;color:#102b55;font-size:20px}
+.panel form button{justify-self:start;min-width:180px}
+#message:not(:empty){position:sticky;bottom:8px;z-index:4;background:#eaf5ef;padding:14px 18px;border:1px solid #b9dfc7;border-radius:9px}
+#message.error:not(:empty){background:#fff0ee;border-color:#e9bcb6}
+#campaignList,#reportTable{margin-top:14px}
+@media(max-width:700px){.admin-process{grid-template-columns:1fr}.panel form button{width:100%}}
+
+
+/* A1 Opportunities: responsive text-only wordmark, never an image logo. */
+.a1-opps-brand{display:inline-flex;align-items:baseline;gap:.34em;direction:ltr!important;unicode-bidi:isolate;white-space:nowrap;vertical-align:middle;max-width:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif!important;font-size:clamp(17px,1.45vw,23px)!important;font-weight:500;line-height:1.25;letter-spacing:-.035em}
+.a1-opps-brand .a1-opps-word-a1{color:#44a5f6!important;font-weight:600}
+.a1-opps-brand--light .a1-opps-word-name{color:#142e52!important}
+.a1-opps-brand--dark .a1-opps-word-name{color:#ffffff!important}
+@media(max-width:540px){.a1-opps-brand{font-size:clamp(16px,4.3vw,19px)!important;gap:.3em}}

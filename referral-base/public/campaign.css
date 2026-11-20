@@ -1,0 +1,215 @@
+/* LinkTutor Pro campaign, scoped to public visitor page */
+:root{--lt-gold:#d2a33d;--lt-navy:#10285f}
+.campaign-page{background:#fff}
+.campaign-page .brand-icon{background:linear-gradient(145deg,#1b4ea3,#10285f);color:#f6d98c}
+.campaign-page .brand small{color:#b38c43;font-size:9px;letter-spacing:1.1px}
+.campaign-page .hero{background:radial-gradient(circle at 92% 16%,#dceaff 0,transparent 34%),linear-gradient(118deg,#f8fbff,#edf4ff)}
+.campaign-page .hero-grid{grid-template-columns:1.04fr .96fr;gap:48px;padding:78px 0 88px;min-height:610px}
+.campaign-page .eyebrow{border-color:#e4d7ba;color:#7b5924;background:#fffdf7}
+.campaign-superline{color:#365d9b;text-transform:uppercase;letter-spacing:.06em;font-size:12px;font-weight:800;margin:26px 0 -10px}
+.campaign-superline span{color:var(--lt-gold);margin:0 5px}
+.campaign-page .hero h1{max-width:670px;line-height:1.24;margin:25px 0 24px}
+.campaign-page .hero h1 span{color:#2358bd}
+.campaign-page .hero-copy{font-size:17px;max-width:620px}
+.campaign-page .primary-btn{background:#2355bb;box-shadow:0 10px 22px #1e40af22}
+.campaign-page .primary-btn:hover{background:#163b90}
+.campaign-page .hero-notes{font-size:12px;font-weight:800}
+.campaign-page .visual{min-height:455px}
+.campaign-page .visual .glow{background:radial-gradient(circle,#c6dbff 0,#e8f0ff88 59%,transparent 73%)}
+.opportunity-card{position:relative;width:min(415px,100%);background:linear-gradient(147deg,#122c67 0%,#153d89 75%,#1d50a7 100%);border-radius:24px;padding:29px 32px;color:white;box-shadow:0 32px 74px #10285f2d;overflow:hidden;border:1px solid #4d72b9}
+.opportunity-card:before{content:"";position:absolute;right:-95px;top:62px;border:1px solid #ffffff21;width:320px;height:320px;border-radius:50%;pointer-events:none}
+.opportunity-card:after{content:"";position:absolute;right:-47px;top:100px;border:1px solid #ffffff18;width:230px;height:230px;border-radius:50%;pointer-events:none}
+.opportunity-top{display:flex;justify-content:space-between;align-items:center;color:#e6edf9;font-size:12px;font-weight:800;letter-spacing:1.5px}
+.gold-dot{color:#dfb967;font-size:26px}
+.opportunity-icon{width:95px;height:95px;display:flex;align-items:center;justify-content:center;gap:3px;border-radius:22px;background:#ffffff20;border:1px solid #ffffff44;font-size:36px;font-weight:800;color:#ffdf8b;margin:22px 0 16px}
+.opportunity-icon span+span{font-size:27px;color:#fff}
+.opportunity-heading{font-size:27px;line-height:1.42;margin:0 0 10px;font-weight:800;position:relative}
+.opportunity-sub{font-size:14px;line-height:1.65;color:#d7e5ff;margin:0}
+.opportunity-divider{height:1px;background:#ffffff3c;margin:23px 0}
+.opportunity-detail{display:flex;align-items:center;gap:10px;position:relative;margin:13px 0;font-size:13px;color:#f6f8ff;font-weight:700}
+.opportunity-detail>span:first-child{color:#f0c66e;font-size:18px;width:21px;text-align:center}
+.opportunity-tag{color:#f5d58d;font-weight:800;letter-spacing:.5px;margin-top:22px;font-size:15px}
+.campaign-page .floating{color:#3d5c8a}
+.campaign-page .floating-one{top:25px;right:0}
+.campaign-page .floating-two{bottom:15px;left:-12px}
+.campaign-features{grid-template-columns:repeat(4,minmax(0,1fr))}
+.campaign-features article{min-width:0;padding:26px 20px}
+.campaign-features article h3{line-height:1.4}
+.campaign-page .feature-grid article{background:#fff}
+.campaign-disclaimer{font-size:13px;line-height:1.85;color:#78869b;text-align:center;margin:26px auto 0;max-width:830px}
+.campaign-how{padding-top:35px}
+.campaign-how .section-top{margin-bottom:34px}
+.campaign-page .highlight{background:linear-gradient(110deg,#10295f,#143c83)}
+.campaign-pending{font-size:12px!important;color:#d5e1f4!important}
+.campaign-page .date-card{border-color:#6784b6;background:#ffffff12}
+.campaign-page .date-card strong{color:#f1d28a}
+.campaign-page .form-card{background:#fff}
+.campaign-page .form-card .primary-btn{width:100%}
+.campaign-page [hidden]{display:none!important}
+.campaign-page .registration-closed-card{min-height:290px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:17px;background:linear-gradient(150deg,#ffffff 12%,#f4f8ff 100%);border-color:#d4e2f6}
+.campaign-page .registration-closed-icon{display:grid;place-items:center;width:54px;height:54px;background:#e8efff;border-radius:15px;font-size:27px;color:#2656b9}
+.campaign-page .registration-closed-card h3{font-size:clamp(23px,3vw,30px);line-height:1.35;color:#122b5d;margin:0}
+.campaign-page .registration-closed-card p{font-size:15px;line-height:1.85;margin:0;color:#405779;max-width:440px}
+.campaign-page .registration-closed-link{align-self:flex-start;min-height:44px;display:inline-flex;align-items:center;text-decoration:none}
+/* Referral conversion: booking immediately follows hero, with a clear two-column layout. */
+.campaign-page .signup-area{margin-top:0;padding-top:76px;padding-bottom:78px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(22px,5vw,78px);align-items:start}
+.campaign-page .signup-area>div:first-child{padding-top:22px}
+.campaign-page .signup-area h2{line-height:1.2;max-width:600px}
+.campaign-page .signup-area .notice{border:1px solid #dce6f5;background:#f6f9ff;border-radius:14px;padding:18px 22px;box-shadow:none}
+.campaign-page #programAvailability:not(:empty){border-inline-start:4px solid #c99037;padding:13px 16px;background:#fff9eb;color:#6d4b19;border-radius:7px;font-weight:700}
+.campaign-page .form-card{border:1px solid #dce6f5;border-radius:20px;padding:clamp(20px,3vw,34px);box-shadow:0 20px 52px #183a7d15}
+.campaign-page .form-card input:not([type=checkbox]){min-height:48px}
+.campaign-page .form-card .primary-btn:disabled{opacity:.58;cursor:not-allowed;box-shadow:none}
+.campaign-page .section#benefits{padding-top:60px;border-top:1px solid #e8effa}
+@media(max-width:760px){.campaign-page .signup-area{grid-template-columns:1fr;padding-top:52px;padding-bottom:55px;gap:24px}.campaign-page .signup-area>div:first-child{padding-top:0}}
+@media(max-width:520px){.campaign-page .signup-area{padding-top:40px!important;padding-bottom:45px!important}.campaign-page .signup-area .form-card{padding:20px}.campaign-page .signup-area h2{font-size:clamp(29px,8vw,37px)}}
+.campaign-page :is(a,button,input):focus-visible{outline:3px solid #dcb65e;outline-offset:3px}
+html[dir=rtl] .campaign-page .hero h1{letter-spacing:0;line-height:1.4}
+html[dir=rtl] .opportunity-card{font-family:'Tajawal',Tahoma,Arial,sans-serif}
+html[dir=ltr] .opportunity-card{font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif}
+html[dir=ltr] .campaign-page .hero h1{letter-spacing:-2px}
+@media(max-width:1100px){.campaign-features{grid-template-columns:repeat(2,minmax(0,1fr))}.campaign-page .hero-grid{gap:20px}}
+@media(max-width:760px){.campaign-page .hero-grid{grid-template-columns:1fr;padding:50px 0 70px}.campaign-page .hero h1{font-size:clamp(35px,9vw,49px)}.campaign-page .hero-copy{font-size:15px}.campaign-page .visual{min-height:420px}.opportunity-card{width:min(380px,100%)}.campaign-page .trust{justify-content:start}.campaign-page .trust strong{font-size:13px}.campaign-page .floating{display:none}}
+@media(max-width:520px){.campaign-page .top-row{gap:10px}.campaign-page .brand{font-size:15px}.campaign-page .brand small{font-size:7px}.campaign-page .outline-btn{padding:9px;font-size:10px}.campaign-page .hero-buttons{align-items:stretch;flex-direction:column}.campaign-page .hero-buttons a{justify-content:center}.campaign-page .hero-notes{gap:8px 17px}.campaign-features{grid-template-columns:1fr}.campaign-page .section{padding:65px 0}.campaign-page .campaign-how{padding-top:5px}.campaign-page .visual{min-height:415px}.opportunity-card{padding:25px}.opportunity-heading{font-size:25px}}
+@media(prefers-reduced-motion:reduce){.campaign-page .floating,.campaign-page .visual .glow{animation:none}}
+
+/* A1 First UX gate: decorative motion must never cover informative content. */
+.campaign-page .floating,
+.campaign-page .floating-one,
+.campaign-page .floating-two{display:none!important;animation:none!important}
+.campaign-page .visual .glow{animation:none!important;opacity:.35;pointer-events:none;z-index:-1}
+.campaign-page .visual .opportunity-card{animation:none!important;transform:none!important;z-index:2;isolation:isolate}
+.campaign-page .visual .opportunity-card::before,
+.campaign-page .visual .opportunity-card::after{z-index:0;pointer-events:none}
+.campaign-page .visual .opportunity-card > *{position:relative;z-index:1}
+.campaign-page .visual .opportunity-heading,
+.campaign-page .visual .opportunity-sub,
+.campaign-page .visual .opportunity-detail{opacity:1!important;filter:none!important;transform:none!important}
+.campaign-page .visual .glow,
+.campaign-page .visual .opportunity-card,
+.campaign-page .visual .opportunity-card *{will-change:auto}
+@media(prefers-reduced-motion:reduce){.campaign-page *, .campaign-page *::before,.campaign-page *::after{animation:none!important;transition:none!important}}
+
+/* WhatsApp Community is available only when the organizer publishes a verified invite. */
+.community-invite{margin:18px 0 14px;max-width:460px}
+.community-invite[hidden]{display:none!important}
+.community-invite-link{display:flex;justify-content:center;align-items:center;width:100%;background:#128c54;color:white!important;padding:14px 20px;border-radius:12px;text-align:center;font-size:16px;font-weight:700;text-decoration:none;min-height:50px;box-shadow:0 7px 18px rgba(0,0,0,.12)}
+.community-invite-link:hover,.community-invite-link:focus-visible{background:#0f7545}
+.community-invite p{font-size:12px;color:#dcecff;margin:8px 0 0;text-align:center;line-height:1.6}
+@media(max-width:600px){.community-invite{max-width:100%;margin:13px 0}.community-invite-link{font-size:15px}}
+/* A1 Opportunities: community-first campaign, legacy signup remains in shared engine. */
+.campaign-page .signup-area{display:none!important}
+.campaign-page .community-invite{max-width:520px;margin:22px 0 11px}
+.campaign-page .community-invite-link{min-height:56px;font-size:16px}
+.campaign-page .community-invite p{color:#415a79;font-size:13px;font-weight:600}
+.campaign-page .hero-buttons{margin:11px 0 20px}
+.campaign-page .hero-grid{align-items:center}
+@media(max-width:760px){
+ .campaign-page .hero-grid{padding:34px 0 42px;gap:24px}
+ .campaign-page .hero h1{font-size:clamp(30px,7.5vw,43px)}
+ .campaign-page .hero-copy{line-height:1.7}
+ .campaign-page .visual{min-height:0}
+ .campaign-page .opportunity-card{margin-inline:auto}
+ .campaign-page .community-invite{margin:15px 0 8px}
+}
+@media(max-width:520px){
+ .campaign-page .hero-grid{padding:24px 0 32px}
+ .campaign-page .opportunity-card{padding:21px}
+ .campaign-page .opportunity-heading{font-size:23px}
+ .campaign-page .opportunity-icon{width:70px;height:70px;font-size:29px;margin:14px 0}
+ .campaign-page .campaign-superline{font-size:12px;letter-spacing:0}
+}
+/* Campaign conversion and readability refinement: readable small print, less scrolling. */
+.campaign-page .hero-grid{min-height:0;padding-top:38px;padding-bottom:40px}
+.campaign-page .hero h1{font-size:clamp(36px,3.8vw,58px);line-height:1.24;margin:16px 0}
+html[dir=rtl] .campaign-page .hero h1{line-height:1.36}
+.campaign-page .hero-copy{font-size:17px;line-height:1.75}
+.campaign-page .campaign-superline{font-size:14px;line-height:1.6;margin-top:14px}
+.campaign-page .hero-notes{font-size:15px;gap:12px 18px;line-height:1.6}
+.campaign-page .trust{padding-top:22px;padding-bottom:22px;gap:18px}
+.campaign-page .trust>span,.campaign-page .trust strong,.campaign-page .trust small{font-size:15px;line-height:1.55;color:#30486c}
+.campaign-page .trust strong{white-space:normal}
+.campaign-page .section#benefits{padding-top:32px;padding-bottom:30px}
+.campaign-page .section-top{margin-bottom:24px}
+.campaign-page .section-kicker{font-size:14px;letter-spacing:.02em}
+.campaign-page .section-top p,.campaign-page .feature-grid article p{font-size:15px;line-height:1.75;color:#405779}
+.campaign-page .feature-grid article{padding:21px 19px;min-height:0}
+.campaign-page .feature-grid article h3{font-size:17px;line-height:1.5}
+.campaign-page .campaign-how{padding-top:12px;padding-bottom:32px}
+.campaign-page .campaign-how .section-top{margin-bottom:22px}
+.campaign-page .feature-number{font-size:16px;color:#54719e}
+.campaign-page .highlight{padding-top:36px;padding-bottom:36px}
+.campaign-page .highlight p{font-size:16px;line-height:1.75}
+.campaign-page .campaign-pending{font-size:14px!important}
+.campaign-page .opportunity-top{font-size:13px}
+.campaign-page .opportunity-sub{font-size:15px}
+.campaign-page .opportunity-detail{font-size:15px}
+.campaign-page .hero-buttons a{font-size:15px}
+html[dir=rtl] .campaign-page .hero-buttons .primary-btn,html[dir=rtl] .campaign-page .hero-buttons .secondary-btn{flex-direction:row}
+html[dir=rtl] .campaign-page .hero-buttons a span[aria-hidden]{display:inline-block;transform:scaleX(-1)}
+html[dir=rtl] .campaign-page .opportunity-detail{flex-direction:row-reverse;justify-content:flex-end;direction:ltr}
+html[dir=rtl] .campaign-page .opportunity-detail span:last-child{direction:rtl;text-align:right}
+.campaign-final-cta{background:#edf4ff;padding:26px 0}
+.campaign-final-cta[hidden]{display:none!important}
+.final-cta-inner{display:flex;align-items:center;justify-content:space-between;gap:25px}
+.campaign-final-cta h2{font-size:clamp(22px,2.2vw,30px);margin:0 0 6px;color:#173467}
+.campaign-final-cta p{font-size:16px;margin:0;color:#405779;line-height:1.65}
+.campaign-final-cta .final-community-link{max-width:310px;flex:0 0 310px}
+.campaign-footer-meta{display:flex;flex-direction:column;gap:12px;max-width:620px}
+.campaign-footer-meta p{font-size:13px;line-height:1.6;color:#405779}
+.campaign-footer-meta a{font-size:14px;color:#2358bd;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:760px){
+ .campaign-page .hero-grid{padding:24px 0 30px}
+ .campaign-page .hero h1{font-size:clamp(29px,7.1vw,42px)}
+ .campaign-page .visual{min-height:0}
+ .campaign-page .trust{flex-wrap:wrap;gap:12px;padding:16px 0}
+ .campaign-page .trust>span{width:100%}
+ .campaign-page .trust-divider{display:none}
+ .campaign-page .section#benefits,.campaign-page .campaign-how{padding:28px 0}
+ .final-cta-inner{flex-direction:column;align-items:stretch;text-align:center}
+ .campaign-final-cta .final-community-link{flex:auto;max-width:none}
+}
+@media(max-width:520px){
+ .campaign-page .hero-copy{font-size:16px}
+ .campaign-page .hero-notes{font-size:14px}
+ .campaign-page .trust>span,.campaign-page .trust strong,.campaign-page .trust small{font-size:14px}
+ .campaign-page .section-top h2{font-size:clamp(26px,7vw,34px)}
+ .campaign-page .feature-grid article p{font-size:15px}
+ .campaign-page .highlight{padding:30px 0}
+ .campaign-page .opportunity-detail{font-size:14px}
+}
+/* Subtle LIVE session cue, never imply an ongoing broadcast. */
+.campaign-page .eyebrow{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;line-height:1.5;padding:8px 12px}
+.campaign-page .eyebrow .live-tag{font-size:12px;font-weight:900;letter-spacing:.09em;color:#137b4c;border-inline-start:1px solid #cfdecf;padding-inline-start:8px}
+.campaign-page .eyebrow .ping{position:relative;flex:none;animation:a1LiveIndicatorPulse 2.5s ease-in-out infinite}
+@keyframes a1LiveIndicatorPulse{0%,100%{box-shadow:0 0 0 0 rgba(20,156,91,.20);opacity:1}50%{box-shadow:0 0 0 6px rgba(20,156,91,0);opacity:.65}}
+.campaign-page .opportunity-date-hero{display:flex;align-items:center;gap:15px;direction:ltr;margin:10px 0 10px;padding:4px 0 12px;border-bottom:1px solid #ffffff3d}
+.campaign-page .opportunity-date-hero strong{font-size:clamp(65px,6vw,95px);line-height:.97;color:#f0c66e;letter-spacing:-.055em}
+.campaign-page .opportunity-date-hero span{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+.campaign-page .opportunity-date-hero b{font-size:18px;letter-spacing:.09em;color:#fff}
+.campaign-page .opportunity-date-hero small{font-size:14px;font-weight:700;color:#e8f2ff}
+/* True RTL editorial flow for the Arabic opportunity card; English remains LTR. */
+html[dir=rtl] .campaign-page .opportunity-card{direction:rtl;text-align:right}
+html[dir=rtl] .campaign-page .opportunity-top{direction:rtl}
+html[dir=rtl] .campaign-page .opportunity-date-hero{direction:rtl;justify-content:flex-start;text-align:right}
+html[dir=rtl] .campaign-page .opportunity-date-hero span{direction:rtl;align-items:flex-start;text-align:right}
+html[dir=rtl] .campaign-page .opportunity-date-hero b{direction:ltr;unicode-bidi:isolate}
+html[dir=rtl] .campaign-page .opportunity-icon{margin-right:0;margin-left:auto}
+html[dir=rtl] .campaign-page .opportunity-heading,
+html[dir=rtl] .campaign-page .opportunity-sub,
+html[dir=rtl] .campaign-page .opportunity-tag{text-align:right}
+html[dir=rtl] .campaign-page .opportunity-detail{direction:rtl;flex-direction:row;justify-content:flex-start;text-align:right}
+html[dir=rtl] .campaign-page .opportunity-detail>span:first-child{flex:none}
+html[dir=rtl] .campaign-page .opportunity-detail span:last-child{direction:rtl;text-align:right}
+html[dir=ltr] .campaign-page .opportunity-date-hero{direction:ltr}
+
+.campaign-page .opportunity-icon{width:67px;height:67px;font-size:27px;border-radius:16px;margin:12px 0 10px}
+.campaign-page .opportunity-icon span+span{font-size:23px}
+.campaign-page .opportunity-divider{margin:14px 0}
+.campaign-page .opportunity-tag{margin-top:12px}
+.campaign-page .date-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.campaign-page .date-card strong{font-size:clamp(85px,10vw,125px);line-height:.95;letter-spacing:-.055em}
+.campaign-page .date-card b{font-size:20px;letter-spacing:.15em}
+.campaign-page .date-card span,.campaign-page .date-card small{font-size:14px;line-height:1.6}
+@media(max-width:520px){.campaign-page .opportunity-date-hero strong{font-size:72px}.campaign-page .eyebrow{font-size:12px}.campaign-page .date-card strong{font-size:96px}}
+@media(prefers-reduced-motion:reduce){.campaign-page .eyebrow .ping{animation:none!important}}

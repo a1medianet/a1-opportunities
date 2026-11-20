@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>Ambassador Password Reset | A1 Opportunities</title>
+<link rel="stylesheet" href="/onboarding.css"><link rel="stylesheet" href="/ambassador-preview.css"><link rel="stylesheet" href="/ambassador-reset-enhancements.css">
+<link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin>
+<script src="/ambassador-reset.js" defer></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=a1AmbassadorResetTurnstileLoaded&amp;render=explicit" defer></script><link rel="icon" type="image/svg+xml" href="/branding/a1-opps/icon-blue.svg"></head>
+<body>
+<header class="site-header"><div class="nav-container"><a class="brand" href="/" aria-label="A1 Opportunities"><span class="a1-opps-brand a1-opps-brand--light" dir="ltr" aria-label="A1 Opportunities"><span class="a1-opps-word-a1" aria-hidden="true">A1</span><span class="a1-opps-word-name" aria-hidden="true">Opportunities</span></span></a><div class="nav-actions"><a href="/ambassador" class="signin-link" id="backLink">Ambassador Sign In</a></div></div></header>
+<main class="amb-main"><section class="amb-login-box">
+ <div class="amb-title"><span class="section-kicker">LINKTUTOR PRO · AMBASSADORS</span><h1 id="resetTitle">Reset your password</h1><p id="resetIntro">Use your one-time email recovery link to choose a new password.</p></div>
+ <form id="ambResetForm">
+  <label><span id="newLabel">New password</span><span class="password-field"><input id="newAmbPassword" type="password" autocomplete="new-password" minlength="12" maxlength="128" required><button class="password-visibility" type="button" data-target="newAmbPassword" aria-label="Show password" aria-pressed="false" title="Show password"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></span></label>
+  <label><span id="confirmLabel">Confirm new password</span><span class="password-field"><input id="confirmAmbPassword" type="password" autocomplete="new-password" minlength="12" maxlength="128" required><button class="password-visibility" type="button" data-target="confirmAmbPassword" aria-label="Show password" aria-pressed="false" title="Show password"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></span></label>
+  <p id="passwordGuidance" class="password-guidance">Use a unique password of at least 16 characters. Chrome can suggest and save a strong password.</p>
+  <p id="turnstileProgress" class="turnstile-progress" aria-live="polite">Checking browser security…</p>
+  <div id="ambResetTurnstile" class="turnstile-slot" aria-label="Cloudflare verification"></div>
+  <button type="button" id="turnstileRetry" class="turnstile-retry" hidden>Retry verification</button>
+  <button type="submit" id="resetSubmit" class="submit-button">Reset password</button>
+ </form>
+ <p id="resetMessage" role="status" aria-live="polite"></p>
+ <a id="afterResetSignIn" class="reset-signin-action" href="/ambassador" hidden>Sign in now</a>
+</section></main>
+<footer><div class="footer-inner"><span dir="ltr">A1 Opportunities</span><span data-a1-platform-copyright dir="ltr">© 2026 A1 Media Network. All rights reserved.</span></div></footer>
+</body></html>

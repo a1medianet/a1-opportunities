@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+node_modules/
+data/
+*.sqlite*
+*.db
+*.log
+*.pem
+*.key
+*.p12
+*.pfx
+.private/
+.owner.env
+.turnstile.env
+backups/

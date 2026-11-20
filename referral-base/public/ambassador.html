@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>لوحة السفير | LinkTutor Pro</title><link rel="stylesheet" href="/styles.css"></head>
+<body><header class="topbar"><div class="shell top-row"><a class="brand" href="/"><img class="official-logo" src="/branding/linktutor-light.svg" width="250" height="84" alt="LinkTutor Pro - Train. Teach. Earn."></a><strong>لوحة المُحيل</strong></div></header>
+<main class="portal">
+<section class="portal-card" id="login"><h1>مرحبًا بك</h1><p class="muted">سجّل دخولك بالمفتاح الخاص الذي أرسلته لك الإدارة. رابط الدعوة العام لا يمنح حق الاطلاع على البيانات.</p><form id="loginForm"><label for="access">مفتاح الدخول الخاص</label><input id="access" autocomplete="off" required type="password" placeholder="أدخل مفتاح الدخول"><button type="submit">دخول إلى لوحتي</button></form><p id="loginStatus" role="status" aria-live="polite"></p></section>
+<section class="portal-card ambassador-dashboard" id="dashboard" hidden>
+<div class="amb-header"><div><p class="amb-eyebrow">LINKTUTOR PRO · REFERRAL</p><h1 id="welcome">لوحة المُحيل</h1><p class="muted">رابط واحد دائم لجميع دعواتك. تابع التسجيلات وحالاتها والعمولات المعتمدة من الإدارة.</p></div><button type="button" class="copy" id="refreshDashboard">تحديث النتائج</button></div>
+<div class="amb-invite"><div><strong>رابط الدعوة الشخصي</strong><p class="muted">أرسل هذا الرابط مع إعلان اللقاء. كل من يسجّل عبره يرتبط بحسابك تلقائيًا.</p></div><div class="line"><input readonly id="invite" aria-label="رابط الدعوة الشخصي"><button class="copy" id="copyLink" type="button">نسخ</button><button id="shareLink" type="button">مشاركة عبر واتساب</button></div><p id="copyStatus" role="status" aria-live="polite"></p></div>
+<h2>النتائج حتى الآن</h2>
+<div class="amb-metrics" id="ambassadorTotals" role="status" aria-live="polite"></div>
+<p class="muted amb-footnote">فتحات الرابط ليست أشخاصًا فريدين، وفتح واتساب ليس تأكيدًا للانضمام. حالات التسجيل والدفع يؤكدها المنظم.</p>
+<h2>المشاركون من رابطك <span id="count">0</span></h2>
+<div class="amb-scroll"><table><thead><tr><th>المشارك</th><th>فتح واتساب</th><th>حالة المشارك</th><th>تاريخ التسجيل</th></tr></thead><tbody id="people"></tbody></table></div>
+<h2>حركة العمولات</h2><div class="amb-scroll"><table><thead><tr><th>المشارك</th><th>العمولة</th><th>الحالة</th></tr></thead><tbody id="sales"></tbody></table></div>
+<p id="dashStatus" role="status" aria-live="polite"></p><button type="button" id="logout" class="copy">تسجيل الخروج</button>
+</section></main><script src="/ambassador.js" defer></script></body></html>

@@ -1,0 +1,30 @@
+<!doctype html><html lang="en" dir="ltr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer"><meta name="robots" content="noindex,nofollow">
+<title>Reset Management Password | LinkTutor Pro®</title>
+<link rel="stylesheet" href="/onboarding.css"><link rel="stylesheet" href="/manage-preview.css"><link rel="stylesheet" href="/preview-info.css">
+<script src="/reset.js" defer></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=ownerResetTurnstileLoaded&amp;render=explicit" async defer></script>
+<link rel="icon" type="image/svg+xml" href="/branding/a1-opps/icon-blue.svg"></head><body>
+<header class="site-header"><div class="nav-container">
+ <a class="brand" href="/" aria-label="A1 Opportunities"><span class="a1-opps-brand a1-opps-brand--light" dir="ltr" aria-label="A1 Opportunities"><span class="a1-opps-word-a1" aria-hidden="true">A1</span><span class="a1-opps-word-name" aria-hidden="true">Opportunities</span></span></a>
+ <a class="signin-link" href="/manage">Back to Management</a>
+</div></header>
+<main class="info-hero">
+ <div class="info-shell">
+  <section class="info-card" aria-labelledby="resetHeading">
+   <span class="section-kicker">SECURE ACCOUNT RECOVERY</span>
+   <h1 id="resetHeading">Reset your management password</h1>
+   <p class="info-subtitle">Choose a new password of at least 12 characters, including letters and numbers. If two-step verification is active, you must also provide a valid authenticator or backup code.</p>
+   <form id="resetForm" class="security-form" autocomplete="off">
+    <label>New password <input id="newPassword" type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label>
+    <label>Confirm password <input id="repeatPassword" type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label>
+    <label>Authenticator or recovery code (if enabled) <input id="mfaCode" autocomplete="one-time-code" maxlength="32"></label>
+    <div id="resetTurnstile" class="turnstile-slot" aria-label="Cloudflare verification"></div>
+    <button type="submit" id="resetSubmit">Change Password</button>
+   </form>
+   <p id="resetStatus" class="message" role="status" aria-live="polite"></p>
+   <a id="backToAdmin" class="info-secondary" href="/manage" hidden>Sign In to Management</a>
+  </section>
+ </div>
+</main></body></html>

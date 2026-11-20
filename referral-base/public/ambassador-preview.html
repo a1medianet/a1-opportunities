@@ -1,0 +1,50 @@
+<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Ambassador Dashboard | A1 Opportunities</title><link rel="stylesheet" href="/onboarding.css"><link rel="stylesheet" href="/ambassador-preview.css"><link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin><script src="/ambassador-preview.js" defer></script><script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=a1AmbassadorTurnstileLoaded&amp;render=explicit" defer></script><link rel="icon" type="image/svg+xml" href="/branding/a1-opps/icon-blue.svg"></head>
+<body>
+<header class="site-header"><div class="nav-container"><a class="brand" href="/" aria-label="A1 Opportunities"><span class="a1-opps-brand a1-opps-brand--light" dir="ltr" aria-label="A1 Opportunities"><span class="a1-opps-word-a1" aria-hidden="true">A1</span><span class="a1-opps-word-name" aria-hidden="true">Opportunities</span></span></a><div class="nav-actions"><div id="switchLanguage" class="locale-switch" role="group" aria-label="Interface language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="ar" aria-pressed="false">AR</button></div></div></div></header>
+<main class="amb-main">
+<section id="loginPanel" class="amb-login-box">
+ <div class="amb-title"><span class="section-kicker">LINKTUTOR PRO · AMBASSADORS</span><h1 data-i18n="welcome">Welcome back</h1><p data-i18n="loginInfo">Sign in to see your link and results.</p></div>
+ <form id="emailLogin">
+  <label><span data-i18n="email">Email address</span><input id="loginEmail" type="email" autocomplete="username" required placeholder="name@example.com" dir="ltr"></label>
+  <label><span data-i18n="password">Password</span><input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Your account password"></label>
+   <div id="ambassadorLoginTurnstile" class="turnstile-slot" hidden aria-label="Cloudflare human verification"></div><p id="ambLoginProgress" class="amb-verification-status" role="status" aria-live="polite"></p><button type="button" id="ambLoginRetry" class="amb-verification-retry" hidden>Retry verification</button>
+  <p id="loginMessage" class="error-text" role="status" aria-live="polite"></p>
+  <button id="signInButton" class="submit-button" type="submit" data-i18n="signIn">Sign in</button>
+ </form>
+ <button id="forgotAmbassadorPassword" type="button" class="password-recovery-link" data-i18n="forgot">Forgot password?</button>
+ <form id="ambassadorRecoveryForm" class="ambassador-recovery-form" hidden>
+  <p data-i18n="recoveryIntro">Enter your registered email to request a one-time reset link.</p>
+  <label><span data-i18n="email">Email address</span><input id="ambassadorRecoveryEmail" type="email" autocomplete="email" placeholder="name@example.com" dir="ltr" required></label>
+  <div id="ambassadorRecoveryTurnstile" class="turnstile-slot" aria-label="Cloudflare human verification"></div>
+  <button type="submit" class="submit-button" data-i18n="sendRecovery">Send recovery link</button>
+  <button type="button" id="cancelAmbassadorRecovery" class="password-recovery-link" data-i18n="backToLogin">Back to sign in</button>
+ </form>
+ <p id="ambassadorRecoveryMessage" role="status" aria-live="polite"></p>
+ <p class="after-form"><span data-i18n="newAccount">Not registered yet?</span> <a href="/" data-i18n="createAccount">Create an ambassador account</a></p>
+</section>
+<section id="dashboard" class="amb-dashboard" hidden>
+ <div class="dashboard-hero"><div><p class="dashboard-eyebrow">LINKTUTOR PRO · AMBASSADOR</p><h1 id="greeting">My dashboard</h1><p id="greetingPhone" class="greeting-phone" dir="ltr"></p><p data-i18n="dashboardIntro">Share your link and track results.</p></div><div class="dashboard-actions"><button id="refresh" type="button" data-i18n="refresh">Refresh</button><button id="logout" type="button" data-i18n="logout">Sign out</button></div></div>
+ <section class="data-box profile-card" id="myAccount">
+  <h2 data-profile-i18n="heading">Account details</h2>
+  <div class="profile-field"><span data-profile-i18n="name">Name</span><strong id="profileName"></strong></div>
+  <form id="updatePhoneForm" class="profile-form">
+   <label><span data-profile-i18n="phone">WhatsApp number</span><input id="profilePhone" type="tel" inputmode="tel" dir="ltr" autocomplete="tel" placeholder="+961..." required></label>
+   <button type="submit" data-profile-i18n="savePhone">Save WhatsApp</button>
+  </form>
+  <p id="phoneStatus" class="small-note" role="status" aria-live="polite"></p>
+  <form id="requestEmailChangeForm" class="profile-form">
+   <label><span data-profile-i18n="email">Email address</span><input id="profileEmail" type="email" dir="ltr" autocomplete="email" required></label>
+   <label><span data-profile-i18n="password">Current password (required to change email)</span><input id="profilePassword" type="password" autocomplete="current-password" required></label>
+   <button type="submit" data-profile-i18n="changeEmail">Confirm new email</button>
+  </form>
+  <p id="emailStatus" class="small-note" role="status" aria-live="polite"></p>
+ </section>
+ <div class="invite-panel"><span class="section-kicker" data-i18n="linkLabel">YOUR PERSONAL INVITATION LINK</span><div class="link-line"><input id="referralLink" type="text" readonly aria-label="Personal referral link" dir="ltr"><button type="button" id="copy" data-i18n="copy">Copy link</button><button type="button" id="share" data-i18n="share">Share on WhatsApp</button></div><p id="linkMessage" class="small-note" role="status"></p></div>
+ <h2 data-i18n="results">Campaign results</h2><div id="metrics" class="metrics-grid"></div>
+ <p data-i18n="metricNote" class="small-note">Only verified activity and approved commissions count.</p>
+ <div class="data-box"><h2 data-i18n="participants">My participants</h2><div class="table-wrap"><table><thead><tr><th data-i18n="participant">Participant</th><th data-i18n="whatsapp">WhatsApp click</th><th data-i18n="status">Confirmed progress</th><th data-i18n="registeredAt">Registered</th></tr></thead><tbody id="participantRows"></tbody></table></div></div>
+ <div class="data-box"><h2 data-i18n="commissions">Commission history</h2><div class="table-wrap"><table><thead><tr><th data-i18n="participant">Participant</th><th data-i18n="amount">Amount</th><th data-i18n="status">Status</th></tr></thead><tbody id="commissionRows"></tbody></table></div></div>
+ <p id="dashboardMessage" aria-live="polite"></p>
+</section>
+</main><footer><div class="footer-inner"><span dir="ltr">A1 Opportunities</span><span data-a1-platform-copyright dir="ltr">© 2026 A1 Media Network. All rights reserved.</span></div></footer>
+</body></html>

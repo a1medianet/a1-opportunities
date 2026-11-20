@@ -1,0 +1,134 @@
+<!doctype html><html lang="en" dir="ltr"><head><link rel="icon" type="image/svg+xml" href="/branding/a1-opps/icon-blue.svg"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Campaign Management | A1 Opportunities</title><link rel="stylesheet" href="/onboarding.css"><link rel="stylesheet" href="/manage-preview.css"><script src="/manage-locale.js" defer></script><script src="/manage-preview.js" defer></script><script src="/owner-security-ui.js" defer></script><script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=ownerTurnstileLoaded&amp;render=explicit" defer></script></head><body>
+<header class="site-header"><div class="nav-container"><a class="brand" href="/" aria-label="A1 Opportunities"><span class="a1-opps-brand a1-opps-brand--light" dir="ltr" aria-label="A1 Opportunities"><span class="a1-opps-word-a1" aria-hidden="true">A1</span><span class="a1-opps-word-name" aria-hidden="true">Opportunities</span></span></a><div class="management-header-actions"><div class="locale-switch" role="group" aria-label="Interface language"><button type="button" data-locale="en" aria-pressed="true">EN</button><button type="button" data-locale="ar" aria-pressed="false">AR</button></div></div></div></header>
+<main class="manage-main">
+<section id="adminLogin" class="admin-login">
+ <h1>Management Sign In</h1>
+ <form id="loginForm" class="login-inline" autocomplete="off">
+  <input id="ownerEmail" type="email" inputmode="email" autocomplete="off" required placeholder="Admin email" aria-label="Admin email">
+  <input id="ownerPassword" type="password" autocomplete="current-password" required placeholder="Password" aria-label="Admin password">
+  <button type="submit">Sign In</button>
+ </form>
+ <div id="ownerTurnstile" class="turnstile-slot" hidden aria-label="Cloudflare verification"></div>
+ <form id="mfaLoginForm" class="security-form" hidden autocomplete="off">
+  <p>Enter the 6-digit code from your authenticator app, or a one-time recovery code.</p>
+  <label>Verification code <input id="mfaLoginCode" name="otp" autocomplete="one-time-code" inputmode="text" required maxlength="32"></label>
+  <button type="submit">Verify and Sign In</button>
+  <button id="cancelMfaLogin" type="button" class="secondary-action">Back</button>
+ </form>
+ <button id="forgotPassword" type="button" class="text-action">Forgot password?</button>
+ <form id="recoveryRequestForm" class="security-form" hidden autocomplete="off">
+  <p>A private reset link will be sent to your registered email when secure email recovery is configured.</p>
+  <label>Account email <input id="recoveryEmail" type="email" required autocomplete="off" placeholder="Email address"></label>
+  <div id="recoveryTurnstile" class="turnstile-slot" aria-label="Cloudflare verification"></div>
+  <button type="submit">Send Recovery Link</button>
+  <button type="button" id="cancelRecovery" class="secondary-action">Back to Sign In</button>
+ </form>
+ <p id="loginStatus" class="message" role="status" aria-live="polite"></p>
+</section>
+<div id="adminDashboard" hidden><p style="margin:16px 0"><a href="/opps-campaigns" style="display:inline-block;padding:12px 18px;background:#1764ae;color:white;border-radius:12px;text-decoration:none;font-weight:bold"><span lang="en">A1 Opportunities · Platform Management</span><span lang="ar" dir="rtl">A1 Opportunities · إدارة المنصة</span></a></p>
+ <div class="manage-banner"><div><p><span lang="en">Campaign organizer: LinkTutor Pro</span> · <span lang="ar" dir="rtl">الجهة المنظمة: LinkTutor Pro</span></p><h1>Referral Management</h1><small class="campaign-scope" lang="en">Campaign-specific operations · LinkTutor Pro</small><span>Manage invitations, participants, verified conversions and commission payouts.</span></div><button id="signOut" type="button">Sign Out</button></div>
+ <nav class="quick-nav" aria-label="Management sections"><a href="#applications">Applications</a><a href="#ambassadors">Ambassadors</a><a href="#participants">Participants</a><a href="#sales">Commissions</a><a href="#settings">Campaign Settings</a><a href="#ambassadorEnrollment">Ambassador Signup</a><a href="#privateAmbassadorTest">Test Invite</a><a href="#whatsappGroups">WhatsApp Groups</a><a href="#legalSettings">Terms &amp; Privacy</a><a href="#accountSecurity">Account Security</a><button id="refresh" type="button">Refresh</button></nav>
+ <div id="kpis" class="manage-kpis"></div>
+ <section id="applications" class="admin-section"><div class="section-title"><div><h2>Ambassador Applications</h2><p>New ambassadors appear here after registration. Email verification activates their account and personal referral link.</p></div><span id="applicationsCount" class="counter">0 applications</span></div><div class="responsive-table"><table><thead><tr><th>Full Name</th><th>Email / Login</th><th>Country</th><th>Phone</th><th>Campaign</th><th>Email Verification</th><th>Invitation</th></tr></thead><tbody id="applicationsRows"></tbody></table></div><p class="helper">Passwords are never shown to management. Reset access through the secure account recovery process when enabled.</p></section>
+ <section id="ambassadors" class="admin-section"><div class="section-title"><div><h2>Ambassadors</h2><p>Monitor personal links, total registrations, and access status. Suspend an account without erasing its referral history.</p></div><label class="checkbox-line"><input id="showInactive" type="checkbox"> Show inactive</label></div><div class="responsive-table"><table><thead><tr><th>Ambassador</th><th>Status</th><th>Registered Participants</th><th>Personal Link</th><th>Actions</th></tr></thead><tbody id="ambassadorsRows"></tbody></table></div></section>
+ <section id="participants" class="admin-section"><div class="section-title"><div><h2>Participants &amp; Referral Journey</h2><p>A WhatsApp link click is not membership confirmation. Attendance and payment are independently verified.</p></div><button type="button" id="exportParticipants">Export CSV</button></div><div class="filters"><input id="participantSearch" type="search" placeholder="Search name, phone or inviter..."><select id="participantFilter"><option value="all">All participants</option><option value="registered">Registered</option><option value="clicked">Clicked destination</option><option value="joined">Confirmed group join</option><option value="attended">Confirmed attendance</option><option value="enrolled">Verified paid subscription</option></select></div><p id="resultsCount" class="helper"></p><div class="responsive-table"><table><thead><tr><th>Participant</th><th>WhatsApp</th><th>Inviter</th><th>Destination</th><th>Evidence / Status</th><th>Actions</th></tr></thead><tbody id="participantsRows"></tbody></table></div></section>
+ <section id="sales" class="admin-section"><div class="section-title"><div><h2>Verified Subscriptions &amp; Commissions</h2><p>Record the payment reference and receipt evidence first. Commission approval and payout are separate steps.</p></div></div><form id="verifySubscription" class="sale-form"><label>Participant ID<input id="saleParticipant" type="number" min="1" required></label><label>Payment Reference<input id="salePaymentRef" minlength="4" required></label><label>Evidence / Receipt Reference<input id="saleEvidence" minlength="4" required></label><label>Subscription Amount (USD)<input id="saleAmount" type="number" step="0.01" min="0.01" required></label><label>Commission (USD)<input id="saleCommission" type="number" step="0.01" min="0" required></label><button type="submit">Verify Paid Subscription</button></form><div class="responsive-table"><table><thead><tr><th>Participant</th><th>Ambassador</th><th>Subscription</th><th>Commission</th><th>Current Status</th><th>Actions</th></tr></thead><tbody id="salesRows"></tbody></table></div></section>
+ <section id="community" class="admin-section"><div class="section-title"><div><h2>WhatsApp Community · Visitor Destination</h2><p>Visitors coming from an ambassador link can open the community. This is separate from participant registration, confirmed membership and commissions.</p></div></div>
+ <form id="communityForm" class="settings-form">
+ <label>Official WhatsApp Community Invite Link<input id="communityInviteUrl" type="url" placeholder="https://chat.whatsapp.com/..." autocomplete="off"></label>
+ <label class="checkbox-line"><input id="communityEnabled" type="checkbox"> Show community button on ambassador referral pages</label>
+ <button type="submit">Save Community Destination</button></form>
+ <p id="communityStatus" class="helper" role="status" aria-live="polite">Not published until a valid link is saved and enabled.</p><div class="community-report" style="margin-top:18px"><h3>Community Clicks · Ambassador Attribution</h3><p id="communityReportSummary" class="helper">Loading community analytics…</p><div class="responsive-table"><table><thead><tr><th>Ambassador</th><th>Referral Code</th><th>Referral Link Visits</th><th>Community Button Clicks</th></tr></thead><tbody id="communityReportRows"></tbody></table></div><p class="helper">Clicks are not unique visitors or confirmed community memberships. Only aggregated counts are shown.</p></div>
+ </section>
+ <section id="settings" class="admin-section"><div class="section-title"><div><h2>Campaign Destination</h2><p>Participants receive the official link after completing the registration form. Public registration remains closed until the organizer approves it.</p></div></div><form id="programForm" class="settings-form"><label>Destination Type<select id="programDestinationType"><option value="whatsapp">WhatsApp group</option><option value="custom">Approved external link</option></select></label><label id="whatsappField">WhatsApp Group Link<input id="programGroupUrl" type="url" placeholder="https://chat.whatsapp.com/..."></label><label id="customField" hidden>Approved Custom URL<input id="programCustomUrl" type="url" placeholder="https://linktutorpro.com/..."></label><label class="checkbox-line"><input id="programApproved" type="checkbox"> Organizer approved</label><label class="checkbox-line"><input id="programOpen" type="checkbox"> Open participant registration</label><button type="submit">Save Campaign Settings</button></form><p class="helper">Custom links are accepted only from explicitly approved HTTPS domains. Never redirect visitors before their registration is saved.</p><p id="programState" class="helper"></p></section>
+<section id="ambassadorEnrollment" class="admin-section"><div class="section-title"><div><h2>Ambassador Registration Control</h2><p>Open, close or schedule Create Ambassador Account independently from participant registration. Default is closed.</p></div></div>
+ <form id="enrollmentForm" class="settings-form">
+ <label class="checkbox-line"><input id="enrollmentPublicSwitch" type="checkbox" role="switch" aria-controls="enrollmentMode" aria-describedby="enrollmentState"> Enable Create Ambassador Account on homepage</label>
+ <label>Registration Mode<select id="enrollmentMode"><option value="closed">Closed</option><option value="open">Open now (requires all production gates)</option><option value="scheduled">Schedule opening</option></select></label>
+ <label id="enrollmentDateField" hidden>Opening date and time (your browser timezone)<input type="datetime-local" id="enrollmentDate"></label>
+ <button type="submit">Save registration control</button>
+ </form><p id="enrollmentSaveMessage" class="enrollment-save-message" role="status" aria-live="polite"></p><p id="enrollmentReadiness" class="enrollment-readiness" role="status" aria-live="polite"></p><p id="enrollmentState" class="helper" role="status" aria-live="polite"></p>
+ </section>
+<section id="privateAmbassadorTest" class="admin-section">
+ <div class="section-title"><div><h2>Private Ambassador Test Invitation</h2>
+  <p>Create a single-use, one-hour invitation for one email without opening public registration. Verified email and organizer-published terms are required.</p></div></div>
+ <form id="testInviteForm" class="settings-form">
+  <label>Tester email address<input id="testInviteEmail" type="email" autocomplete="email" required maxlength="254" placeholder="tester@example.com"></label>
+  <button type="submit">Create private invitation</button>
+ </form>
+ <div id="testInviteResult" hidden class="private-invite-result">
+  <p>Copy this link privately. It is valid only for the email above, expires after one hour, and can be used once.</p>
+  <input type="text" id="testInviteUrl" dir="ltr" readonly aria-label="Private test invitation URL">
+  <button type="button" id="copyTestInvite">Copy invitation link</button>
+ </div>
+ <p id="testInviteMessage" role="status" aria-live="polite" class="helper"></p>
+</section>
+ <section id="whatsappGroups" class="admin-section"><div class="section-title"><div><h2>WhatsApp Group Pool</h2><p>Give each group a name, URL and admission limit. Active groups are selected by priority. Mark FULL or CLOSED immediately when it cannot accept participants. Link clicks are not actual confirmed members.</p></div></div>
+ <form id="groupAddForm" class="settings-form">
+  <label>Group name<input id="groupName" required maxlength="100" placeholder="LinkTutor Pro — Group 01"></label>
+  <label>WhatsApp invite URL<input id="groupUrl" required type="url" placeholder="https://chat.whatsapp.com/..."></label>
+  <label>Capacity / admission limit<input id="groupCapacity" required type="number" min="1" max="10000" value="100"></label>
+  <label>Reported current members<input id="groupMembers" required type="number" min="0" value="0"></label>
+  <label>Priority (lower first)<input id="groupPriority" required type="number" min="0" max="10000" value="100"></label>
+  <button type="submit">Add group (draft)</button>
+ </form>
+ <div class="responsive-table"><table><thead><tr><th>Group</th><th>URL</th><th>Capacity</th><th>Reported members</th><th>Assigned links</th><th>Priority</th><th>Status</th><th>Actions</th></tr></thead><tbody id="groupsRows"></tbody></table></div>
+ <p class="helper" id="groupsStatus" role="status" aria-live="polite"></p>
+ </section>
+  <section id="legalSettings" class="admin-section">
+  <div class="section-title"><div><h2>Program Terms & Privacy</h2><p>Edit English and Arabic content independently. Saving a draft does not publish it or open registration.</p></div></div>
+  <form id="legalDraftForm" class="legal-form">
+   <label id="legalEnglishField" data-policy-locale="en">English terms<textarea id="legalEnglish" lang="en" dir="ltr" rows="13" maxlength="10000" minlength="150" required></textarea></label>
+   <label id="legalArabicField" data-policy-locale="ar" hidden>Arabic terms<textarea id="legalArabic" lang="ar" dir="rtl" rows="13" maxlength="10000" minlength="150" required></textarea></label>
+   <button type="submit">Save draft</button>
+  </form>
+  <div class="legal-publish">
+   <p id="legalRevisionStatus" class="helper" role="status" aria-live="polite"></p>
+   <label class="checkbox-line"><input type="checkbox" id="legalPublishConfirm"> I reviewed EN and AR separately and approve publication of both saved versions.</label>
+   <button type="button" id="legalPublishButton">Publish approved wording</button>
+  </div>
+  <p class="helper">Publication updates the public wording. Ambassador registration remains subject to separate security, email and organizer approval gates.</p>
+ </section>
+ <section id="accountSecurity" class="admin-section" aria-labelledby="securityHeading">
+ <div class="section-title"><div><h2 id="securityHeading">Account Security</h2><p>Manage two-step verification for the organizer. Use an authenticator app, and keep backup codes in a safe place.</p></div></div>
+ <div class="security-status"><strong id="mfaStatusLabel">Checking security settings...</strong><span id="mfaCodeCount"></span></div>
+ <form id="mfaStartForm" class="security-form" autocomplete="off">
+  <label>Confirm your current password <input id="mfaCurrentPassword" type="password" autocomplete="current-password" required minlength="12"></label>
+  <button type="submit">Set Up Two-Step Verification</button>
+ </form>
+ <div id="mfaSetup" class="security-form" hidden>
+  <p>Scan this code in your authenticator app, or enter the secret manually. The setup expires in 10 minutes.</p>
+  <img id="mfaQr" alt="Authenticator setup QR code" width="210" height="210">
+  <p><strong>Manual setup key:</strong> <code id="mfaManualSecret"></code></p>
+  <form id="mfaConfirmForm"><label>6-digit code <input id="mfaConfirmCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required></label><button type="submit">Enable Two-Step Verification</button></form>
+ </div>
+ <div id="mfaEnabledActions" class="security-form" hidden>
+  <p>Two-step verification is active. Your password alone will no longer sign in to the administration.</p>
+  <details><summary>Disable two-step verification</summary>
+   <form id="mfaDisableForm" class="security-form" autocomplete="off">
+    <label>Current password <input id="mfaDisablePassword" type="password" required autocomplete="current-password"></label>
+    <label>Authenticator or recovery code <input id="mfaDisableCode" required autocomplete="one-time-code" maxlength="32"></label>
+    <button type="submit" class="secondary-action">Disable (requires verification)</button>
+   </form>
+  </details>
+ </div>
+ <div id="mfaBackupPanel" class="security-form" hidden role="status">
+  <strong>Save these recovery codes now. They will not be shown again.</strong>
+  <pre id="mfaBackupCodes" class="backup-codes"></pre>
+  <button type="button" id="backupCodesSaved">I Saved My Recovery Codes</button>
+ </div>
+ <div class="security-form">
+  <details><summary>Change management password</summary>
+   <form id="ownerChangePasswordForm" class="security-form" autocomplete="off">
+    <label>Current password <input id="ownerCurrentPassword" type="password" autocomplete="current-password" required></label>
+    <label>New password <input id="ownerNewPassword" type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label>
+    <label>Authenticator or backup code (if enabled) <input id="ownerChangePasswordMfa" maxlength="32" autocomplete="one-time-code"></label>
+    <button type="submit">Change Password and Sign Out All Sessions</button>
+   </form>
+  </details>
+ </div>
+ <p id="mfaMessage" class="message" role="status" aria-live="polite"></p>
+</section>
+<p id="ownerMessage" class="message" aria-live="polite"></p>
+</div></main><footer><div class="footer-inner"><span dir="ltr">A1 Opportunities</span><span data-a1-platform-copyright dir="ltr">© 2026 A1 Media Network. All rights reserved.</span></div></footer>
+</body></html>

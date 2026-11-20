@@ -1,0 +1,30 @@
+.info-hero{min-height:calc(100vh - 164px)}
+.info-shell{max-width:720px;margin:auto;padding:clamp(34px,7vw,95px) 16px}
+.info-card{background:white;padding:clamp(24px,5vw,46px);border-radius:18px;box-shadow:0 28px 64px #122b7f38;text-align:center}
+.info-card h1{color:#173470;margin:12px 0;font-size:clamp(26px,3vw,36px);line-height:1.35}
+.info-status{color:#526c94;line-height:1.8;font-size:15px;margin:20px auto}
+.info-status[data-status=success]{color:#137448}.info-status[data-status=failed],.info-status[data-status=expired],.info-status[data-status=missing]{color:#b44143}
+.info-action{margin:22px auto 0;max-width:310px;text-align:center}.info-secondary{display:inline-block;margin:18px auto;color:#2452b3;font-size:13px;font-weight:700}
+.info-subtitle{color:#617495;font-size:14px;line-height:1.75}
+.info-notice{background:#fff6e7;color:#755125;border:1px solid #eed6a5;border-radius:9px;padding:14px 17px;font-size:13px;line-height:1.7}
+.policy-shell{max-width:920px;margin:35px auto 80px;padding:0 17px}.policy-shell h1{font-size:clamp(25px,3.8vw,36px);color:#183b93;margin:16px 0}.policy-content{margin-top:22px;border:1px solid #e1eaf7;background:#fff;border-radius:16px;padding:clamp(18px,3.5vw,35px)}
+.policy-content h2{color:#2448a8;margin:24px 0 8px;font-size:19px}
+.policy-content p,.policy-content li{color:#566a89;font-size:14px;line-height:1.85}
+.policy-content [hidden]{display:none!important}
+.policy-content section:first-child h2:first-child{margin-top:0}
+html[dir=rtl] .policy-shell,html[dir=rtl] .policy-content{text-align:right}
+@media(max-width:520px){.info-shell{padding:24px 13px}.info-card{padding:25px 18px}}
+
+/* Semantic, safely rendered policy text for narrow screens and both reading directions. */
+.policy-content h3{color:#2348a1;font-size:17px;line-height:1.45;margin:25px 0 10px}
+.policy-content h4{color:#284c88;font-size:15px;line-height:1.5;margin:20px 0 8px}
+.policy-content p{margin:10px 0 15px;overflow-wrap:anywhere}
+.policy-content ul{padding-inline-start:25px;margin:9px 0 18px}
+.policy-content li{padding-inline-start:3px;margin:6px 0;overflow-wrap:anywhere}
+.policy-content strong{font-weight:750;color:#14366e}
+.policy-content [lang=ar]{direction:rtl;text-align:right}
+.policy-content [lang=en]{direction:ltr;text-align:left}
+@media(max-width:520px){.policy-shell{margin:22px auto 45px;padding:0 12px}.policy-content{padding:18px 15px}.policy-content p,.policy-content li{font-size:14px;line-height:1.75}}
+
+/* Verification success: a concise, single action with no redundant header. */
+.info-card.verified-success{padding:30px 25px}.verified-success h1{font-size:clamp(23px,3vw,30px)}.verified-success .info-status{margin:12px 0 16px}.verified-success .info-action{margin-top:12px}
