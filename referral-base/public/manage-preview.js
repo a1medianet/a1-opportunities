@@ -92,7 +92,8 @@ function renderParticipants(){
  filtered();const tbody=$('participantsRows');tbody.replaceChildren();
  for(const p of shown){
   const tr=document.createElement('tr');
-  td(tr,p.id+' · '+p.name);td(tr,p.phone);td(tr,p.ambassador);
+  td(tr,p.real_name||p.display_code||p.name);td(tr,p.phone);td(tr,p.ambassador+' ('+p.referralCode+')');
+  td(tr,new Date(p.registered_at.replace(' ','T')+'Z').toLocaleString('sv-SE',{timeZone:'Asia/Beirut',hour12:false}));
   td(tr,p.clickedWhatsApp?'Opened link':'Not clicked');
   const evidence=[stateLabels[p.status]||p.status,p.confirmedJoin?'Group join confirmed':'',p.confirmedAttendance?'Attendance confirmed':''].filter(Boolean).join(' · ');
   td(tr,evidence);
