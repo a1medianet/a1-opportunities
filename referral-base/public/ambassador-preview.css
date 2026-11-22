@@ -15,3 +15,17 @@
 @media(max-width:600px){.profile-form{flex-direction:column;align-items:stretch}.profile-form label,.profile-form button{width:100%}}
 
 .dashboard-hero .greeting-phone{margin:0 0 8px;color:#e1eaff;font-size:14px;font-weight:500;direction:ltr;text-align:start}
+/* Compact dashboard: keep meaningful results close to the referral link. */
+.amb-main{padding-top:34px;padding-bottom:42px;min-height:0;flex:1 0 auto}
+.amb-dashboard .dashboard-hero{margin-bottom:16px}
+.amb-dashboard .invite-panel,.amb-dashboard .data-box{margin-bottom:16px}
+.amb-dashboard h2{margin:15px 0 12px}
+.amb-dashboard .metrics-grid{gap:12px}
+.amb-dashboard .metric{padding:16px}
+@media(max-width:600px){.amb-main{padding:20px 13px 30px}}
+@media(prefers-reduced-motion:no-preference){
+.amb-dashboard .dashboard-hero{background-size:160% 160%;animation:a1-amb-gradient 18s ease-in-out infinite alternate}
+.amb-dashboard .link-line button{transition:transform .2s ease,box-shadow .2s ease}
+.amb-dashboard .link-line button:hover{transform:translateY(-2px);box-shadow:0 6px 16px #12346e24}
+}
+@keyframes a1-amb-gradient{from{background-position:0% 50%}to{background-position:100% 50%}}

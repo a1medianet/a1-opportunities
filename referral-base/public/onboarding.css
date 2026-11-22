@@ -79,6 +79,32 @@ html[dir=rtl] .schedule-label{letter-spacing:0}
 /* Invisible Turnstile must not reserve a blank row on mobile or desktop. */
 #turnstile.turnstile-slot{min-height:0;margin:0;padding:0;display:block}#turnstile:empty{display:none}.signup-card .terms-row{margin-bottom:7px}.signup-card .terms-link{margin:6px 0 10px}
 
+/* The onboarding hero fills the available viewport space so no empty white strip separates it from the footer. */
+body{min-height:100vh;display:flex;flex-direction:column}
+body>main{display:flex;flex-direction:column;flex:1 0 auto;min-height:0}
+body>main>.hero{flex:1 0 auto}
+body>footer{flex:none}
+@media(min-width:851px){.hero-container{padding-top:48px;padding-bottom:48px}}
+/* Never force a full viewport's height on narrow screens: content may scroll normally. */
+@media(max-width:850px){body>main{flex:0 0 auto}body>main>.hero{flex:0 0 auto}}
+/* Quiet motion, decorative only; never animate form fields or management pages. */
+@media(prefers-reduced-motion:no-preference){
+.hero:before{animation:a1-orbit-breathe 18s ease-in-out infinite alternate}
+.hero .active-dot{animation:a1-status-breathe 3s ease-in-out infinite}
+.submit-button,.signin-link{transition:background-color .2s ease,transform .2s ease,box-shadow .2s ease}
+.submit-button:hover:not(:disabled),.signin-link:hover{transform:translateY(-2px);box-shadow:0 10px 22px #0b25613a}
+}
+@keyframes a1-orbit-breathe{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-14px,10px,0) scale(1.025)}}
+@keyframes a1-status-breathe{0%,100%{box-shadow:0 0 0 4px #22d56a22}50%{box-shadow:0 0 0 7px #22d56a12}}
+/* Compact session countdown within the ambassador invitation page. */
+.hero-content .a1-countdown{max-width:570px;margin:18px 0 10px;padding:14px 17px;background:#ffffff12;border:1px solid #ffffff45;border-radius:14px;color:#fff}
+.hero-content .a1-countdown-caption{text-align:center;font-size:12px;font-weight:750;color:#eff4ff}
+.hero-content .a1-countdown-units{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:10px 0}
+.hero-content .a1-countdown-unit{min-width:0;padding:7px 4px;border-radius:9px;background:#ffffff16;display:flex;flex-direction:column;align-items:center}
+.hero-content .a1-countdown-unit strong{font-size:24px;line-height:1.15;font-variant-numeric:tabular-nums;color:#f5d087}
+.hero-content .a1-countdown-unit small{font-size:10px;color:#f2f5ff;margin-top:4px}
+.hero-content .a1-countdown-foot{font-weight:500;font-size:11px}
+@media(max-width:520px){.hero-content .a1-countdown{padding:11px;margin:10px 0}.hero-content .a1-countdown-units{gap:6px}.hero-content .a1-countdown-unit strong{font-size:21px}.hero-content .a1-countdown-foot{font-size:10px}}
 /* Invisible widget keeps token validation but takes no visible layout space. */
 #turnstile.turnstile-slot{min-height:0;margin:0;padding:0;border:0}
 #turnstileProtection[hidden]{display:none!important}

@@ -7,16 +7,64 @@ const securityPost=async(path,data)=>{
  if(!res.ok)throw Error(res.status===429?'Too many attempts. Please try again later.':out.error||'Unable to complete request.');
  return out;
 };
-function renderSecurityTurnstile(){
- if(!window.turnstile||!securityConfig.turnstileEnabled||!securityConfig.siteKey)return;
- $('ownerTurnstile').hidden=false;
- // Turnstile must not render into a hidden container.
- if(loginWidget===undefined)loginWidget=window.turnstile.render('#ownerTurnstile',{sitekey:securityConfig.siteKey,action:'owner_login',callback:t=>ownerLoginTurnstile=t,'expired-callback':()=>ownerLoginTurnstile='','error-callback':()=>{ownerLoginTurnstile='';$('loginStatus').textContent='Cloudflare verification could not load. Reload and try again.';return true}});
- // Recovery form starts hidden; create its widget only after it is shown.
- if(!$('recoveryRequestForm').hidden&&recoveryWidget===undefined)recoveryWidget=window.turnstile.render('#recoveryTurnstile',{sitekey:securityConfig.siteKey,action:'owner_recovery',callback:t=>ownerRecoveryTurnstile=t,'expired-callback':()=>ownerRecoveryTurnstile='','error-callback':()=>{ownerRecoveryTurnstile='';$('loginStatus').textContent='Cloudflare verification could not load. Reload and try again.';return true}});
+let ownerScriptBusy=false,ownerTurnstileWatchdog;
+function ownerTurnstileStatus(message, retry=false){
+ $('ownerTurnstileStatus').textContent=message;
+ $('ownerTurnstileRetry').hidden=!retry;
 }
+function renderSecurityTurnstile(){
+ if(!securityConfig.turnstileEnabled||!securityConfig.siteKey)return;
+ $('ownerTurnstile').hidden=false;
+ if(!window.turnstile)return;
+ try{
+  if(loginWidget===undefined){
+   loginWidget=window.turnstile.render('#ownerTurnstile',{
+    sitekey:securityConfig.siteKey,action:'owner_login',appearance:'always',
+    callback:token=>{ownerLoginTurnstile=token;ownerTurnstileStatus('');$('loginStatus').textContent=''},
+    'expired-callback':()=>{ownerLoginTurnstile='';ownerTurnstileStatus('Verification expired. Please complete it again.')},
+    'error-callback':()=>{ownerLoginTurnstile='';ownerTurnstileStatus('Cloudflare verification could not load.',true);return true},
+    'timeout-callback':()=>{ownerLoginTurnstile='';ownerTurnstileStatus('Cloudflare verification timed out.',true)}
+   });
+  }
+  if(!$('recoveryRequestForm').hidden&&recoveryWidget===undefined)recoveryWidget=window.turnstile.render('#recoveryTurnstile',{
+    sitekey:securityConfig.siteKey,action:'owner_recovery',
+    callback:t=>ownerRecoveryTurnstile=t,
+    'expired-callback':()=>ownerRecoveryTurnstile='',
+    'error-callback':()=>{ownerRecoveryTurnstile='';ownerTurnstileStatus('Cloudflare verification could not load.',true);return true}
+  });
+  if(loginWidget!==undefined)ownerTurnstileStatus('');
+ }catch(error){ownerTurnstileStatus('Cloudflare verification is unavailable. Please retry.',true)}
+}
+function loadOwnerTurnstile(){
+ if(!securityConfig.turnstileEnabled)return;
+ $('ownerTurnstile').hidden=false;
+ if(window.turnstile){renderSecurityTurnstile();return}
+ if(ownerScriptBusy)return;
+ ownerScriptBusy=true;
+ ownerTurnstileStatus('Loading Cloudflare verification…');
+ const script=document.createElement('script');
+ script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+ script.async=true;
+ clearTimeout(ownerTurnstileWatchdog);
+ ownerTurnstileWatchdog=setTimeout(()=>{if(ownerScriptBusy){ownerScriptBusy=false;script.remove();ownerTurnstileStatus('Cloudflare verification could not load. Check browser extensions and retry.',true)}},12000);
+ script.onload=()=>{clearTimeout(ownerTurnstileWatchdog);ownerScriptBusy=false;renderSecurityTurnstile()};
+ script.onerror=()=>{clearTimeout(ownerTurnstileWatchdog);ownerScriptBusy=false;script.remove();ownerTurnstileStatus('Cloudflare verification was blocked. Allow challenges.cloudflare.com, then retry.',true)};
+ document.head.appendChild(script);
+}
+$('ownerTurnstileRetry').addEventListener('click',()=>{
+ ownerLoginTurnstile='';ownerTurnstileStatus('');
+ if(window.turnstile&&loginWidget!==undefined){
+  try{window.turnstile.reset(loginWidget);return}
+  catch{loginWidget=undefined}
+ }
+ loadOwnerTurnstile();
+});
 window.ownerTurnstileLoaded=renderSecurityTurnstile;
-fetch('/api/owner/security/config',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(data=>{if(data){securityConfig=data;renderSecurityTurnstile()}}).catch(()=>{});
+fetch('/api/owner/security/config',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(data=>{
+ if(!data){ownerTurnstileStatus('Unable to load security settings. Refresh this page.',true);return}
+ securityConfig=data;
+ if(data.turnstileEnabled&&data.siteKey)loadOwnerTurnstile();
+}).catch(()=>ownerTurnstileStatus('Unable to load Cloudflare security settings. Refresh this page.',true));
 function resetWidget(type){
  try{window.turnstile?.reset(type==='login'?loginWidget:recoveryWidget)}catch{}
  if(type==='login')ownerLoginTurnstile='';else ownerRecoveryTurnstile='';
@@ -31,7 +79,7 @@ async function showOrganizer(account){
 window.a1OrganizerShow=showOrganizer;
 window.a1OrganizerSignIn=async e=>{
  e.preventDefault();$('loginStatus').textContent='';
- if(securityConfig.turnstileEnabled&&!ownerLoginTurnstile){$('loginStatus').textContent='Complete the Cloudflare verification first.';return}
+ if(securityConfig.turnstileEnabled&&!ownerLoginTurnstile){$('loginStatus').textContent='Complete the visible Cloudflare verification first.';loadOwnerTurnstile();return}
  try{
   const response=await fetch('/api/owner/login',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({email:$('ownerEmail').value.trim(),password:$('ownerPassword').value,turnstileToken:ownerLoginTurnstile})});
   const account=await response.json().catch(()=>({}));
@@ -53,7 +101,7 @@ $('mfaLoginForm').addEventListener('submit',async e=>{
 $('cancelMfaLogin').addEventListener('click',()=>{mfaChallenge='';$('mfaLoginCode').value='';$('mfaLoginForm').hidden=true;$('loginForm').hidden=false});
 $('forgotPassword').addEventListener('click',()=>{
  if(!securityConfig.recoveryReady){$('loginStatus').textContent='Recovery is not available until the administrator configures verified SMTP and Cloudflare Turnstile.';return}
- $('loginStatus').textContent='';$('loginForm').hidden=true;$('mfaLoginForm').hidden=true;$('recoveryRequestForm').hidden=false;renderSecurityTurnstile();
+ $('loginStatus').textContent='';$('loginForm').hidden=true;$('mfaLoginForm').hidden=true;$('recoveryRequestForm').hidden=false;loadOwnerTurnstile();
 });
 $('cancelRecovery').addEventListener('click',()=>{$('recoveryRequestForm').hidden=true;$('loginForm').hidden=false;$('recoveryEmail').value='';$('loginStatus').textContent=''});
 $('recoveryRequestForm').addEventListener('submit',async e=>{

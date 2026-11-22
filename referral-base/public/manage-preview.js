@@ -6,12 +6,13 @@ async function refreshCommunity(){
   const c=await request('/api/admin/community');
   $('communityInviteUrl').value=c.inviteUrl||'';
   $('communityEnabled').checked=Boolean(c.enabled);
-  $('communityStatus').textContent=c.enabled?'Community invitation is published on attributed referral pages.':'Community invitation is not published.';
+  $('communityStatus').textContent=c.enabled?'تم نشر رابط المجتمع على صفحات الإحالة.':'رابط المجتمع غير منشور.';
   const report=await request('/api/admin/community/report');
-  $('communityReportSummary').textContent='Referral link visits: '+report.visits+' · Community link clicks: '+report.communityClicks;
+  $('communityReportSummary').textContent='الإجمالي: '+report.visits+' زيارة للرابط و'+report.communityClicks+' نقرة على المجتمع. فترة الحملة (20 تشرين الثاني، 8 مساءً ← 28 تشرين الثاني، 7 مساءً بتوقيت بيروت): '+report.period.visits+' زيارة و'+report.period.communityClicks+' نقرة. تتضمن الإحصاءات الإجمالية زيارات الاختبار السابقة فقط.';
+  const kpi=document.querySelector('#communityClickKpi strong');if(kpi)kpi.textContent=String(report.communityClicks);
   const body=$('communityReportRows');body.replaceChildren();
-  for(const r of report.rows){const tr=document.createElement('tr');td(tr,r.name);td(tr,r.code);td(tr,r.visits);td(tr,r.communityClicks);body.append(tr);}
-  if(!report.rows.length)empty(body,4,'No ambassador activity recorded yet.');
+  for(const r of report.rows){const tr=document.createElement('tr');td(tr,r.name);td(tr,r.code);td(tr,r.campaignVisits);td(tr,r.campaignClicks);td(tr,r.visits);td(tr,r.communityClicks);body.append(tr);}
+  if(!report.rows.length)empty(body,6,'No ambassador activity recorded yet.');
  }catch(error){$('communityStatus').textContent=error.message}
 }
 const money=value=>(Number(value||0)/100).toFixed(2)+' USD';
@@ -80,7 +81,7 @@ function filtered(){
  const term=$('participantSearch').value.trim().toLowerCase();
  const filter=$('participantFilter').value;
  shown=records.filter(p=>{
-  if(term&&!([p.id,p.name,p.phone,p.ambassador].join(' ').toLowerCase().includes(term)))return false;
+  if(term&&!([p.id,p.name,p.real_name,p.display_code,p.phone,p.ambassador,p.referralCode].join(' ').toLowerCase().includes(term)))return false;
   if(filter==='joined')return Boolean(p.confirmedJoin);
   if(filter==='attended')return Boolean(p.confirmedAttendance);
   return filter==='all'||(filter==='clicked'?Boolean(p.clickedWhatsApp):p.status===filter);
@@ -101,7 +102,7 @@ function renderParticipants(){
   if(p.status!=='enrolled')command(actions,'Verify subscription',async()=>{$('saleParticipant').value=p.id;location.hash='sales';$('salePaymentRef').focus();return false});
   tr.append(actions);tbody.append(tr);
  }
- if(!shown.length)empty(tbody,6,'No participants match these filters.');
+ if(!shown.length)empty(tbody,7,'No participants match these filters.');
 }
 function renderSales(sales){
  const tbody=$('salesRows');tbody.replaceChildren();
@@ -130,11 +131,12 @@ async function refresh(){
  $('legalPublishConfirm').checked=false;
  records=d.participants||[];ambassadorRecords=d.ambassadors||[];applications=a.applications||[];program=settings;
  const ambassadors=d.perAmbassador||[],totals=d.totals||{};
+ const communityKpi=stat('Community Link Clicks','…','Click events, not confirmed memberships');communityKpi.id='communityClickKpi';
  $('kpis').replaceChildren(
  stat('Ambassador Applications',applications.length,'Registered account requests'),
  stat('Active Ambassadors',ambassadorRecords.filter(x=>x.status==='approved').length,'Active referral links'),
  stat('Registered Participants',ambassadors.reduce((n,x)=>n+(x.registered||0),0),'Attributed by personal link'),
- stat('WhatsApp Link Clicks',ambassadors.reduce((n,x)=>n+(x.clickedWhatsApp||0),0),'Does not confirm membership'),
+ communityKpi,
  stat('Confirmed Group Joins',ambassadors.reduce((n,x)=>n+(x.confirmedJoin||0),0),'Verified by organizer'),
  stat('Verified Paid Subscriptions',totals.verifiedSubscriptions||0,'Requires payment evidence'),
  stat('Recorded Commissions',money(totals.totalCommissionCents),'Verified paid referrals'),
@@ -195,13 +197,15 @@ $('communityForm').addEventListener('submit',async event=>{
 });
 $('signOut').addEventListener('click',async()=>{await fetch('/api/owner/logout',{method:'POST',credentials:'same-origin'}).catch(()=>{});ownerCsrf='';records=[];applications=[];$('adminDashboard').hidden=true;$('adminLogin').hidden=false;$('ownerMessage').textContent=''});
 fetch('/api/owner/me',{credentials:'same-origin',cache:'no-store'}).then(async r=>{if(!r.ok)return;const user=await r.json();await window.a1OrganizerShow(user)}).catch(()=>{});
-$('exportParticipants').addEventListener('click',()=>{
- if(!ownerCsrf)return;filtered();
- const rows=[['ID','Name','WhatsApp','Ambassador','Link Click','Status','Registered At'],...shown.map(p=>[p.id,p.name,p.phone,p.ambassador,p.clickedWhatsApp?'Yes':'No',p.status,p.registered_at])];
- const safe=v=>'"'+String(v??'').replace(/^[=+@\-\t\r]/,"'").replace(/"/g,'""')+'"';
- const csv='\uFEFF'+rows.map(row=>row.map(safe).join(',')).join('\r\n');
- const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
- const el=document.createElement('a');el.href=url;el.download='linktutor-referrals-'+new Date().toISOString().slice(0,10)+'.csv';el.click();setTimeout(()=>URL.revokeObjectURL(url),500);
+$('exportParticipants').addEventListener('click',async()=>{
+ if(!ownerCsrf)return;
+ try{
+  const response=await fetch('/api/admin/participants/export.csv',{credentials:'same-origin',cache:'no-store'});
+  if(!response.ok)throw Error('CSV export failed: '+response.status);
+  const url=URL.createObjectURL(await response.blob());
+  const el=document.createElement('a');el.href=url;el.download='a1-opportunities-linktutor-referrals.csv';el.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+ }catch(error){$('ownerMessage').textContent=error.message;}
 });
 
 function renderEnrollment(value){

@@ -4,16 +4,17 @@ import {readFileSync} from 'node:fs';
 const read=(path)=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 test('referral landing offers participant registration before benefit articles',()=>{
  const h=read('public/index.html');
- assert.ok(h.indexOf('id="register"')>h.indexOf('class="trust shell"'));
+ assert.ok(h.indexOf('id="register"')>h.indexOf('class="opportunity-card"'));
  assert.ok(h.indexOf('id="register"')<h.indexOf('id="benefits"'));
  assert.match(h,/id="registration"/);
- assert.match(h,/id="participantTurnstile"/);
+ assert.doesNotMatch(h,/id="participantTurnstile"/);
 });
-test('participant Turnstile config is independent of ambassador signup gate',()=>{
+test('phone-only community registration is rate limited and not Turnstile-gated',()=>{
  const s=read('src/server.js'),c=read('public/app.js');
- assert.match(s,/url\.pathname==='\/api\/participant\/security\/config'/);
- assert.match(s,/turnstileEnabled:portalEnabled&&liveTurnstileReady/);
- assert.match(c,/fetch\('\/api\/participant\/security\/config'/);
- assert.doesNotMatch(c,/fetch\('\/api\/signup-config'/);
- assert.match(s,/verifyTurnstile\(input.turnstileToken,'participant_signup'\)/);
+ const start=s.indexOf("url.pathname==='/api/community/register'");
+ assert.ok(start>=0);
+ const route=s.slice(start,s.indexOf("url.pathname==='/api/participant/security/config'",start));
+ assert.match(route,/registerAllowed\(req\)/);
+ assert.doesNotMatch(route,/verifyTurnstile/);
+ assert.match(c,/\/api\/community\/register/);
 });

@@ -80,13 +80,13 @@ export function createOpportunityCatalog(db){
   const ambassadors=db.prepare(`SELECT a.id,a.name,a.code,a.status,
     COUNT(p.id) AS registered FROM ambassadors a LEFT JOIN participants p ON p.ambassador_id=a.id
     WHERE a.campaign_id=? GROUP BY a.id ORDER BY a.id DESC`).all(cid);
-  const participants=db.prepare(`SELECT p.id,p.name,p.phone,p.status,p.registered_at,
+  const participants=db.prepare(`SELECT p.id,p.name,p.real_name,p.display_code,p.phone,p.status,p.registered_at,
     CASE WHEN p.join_clicked_at IS NOT NULL THEN 1 ELSE 0 END AS clickedWhatsApp,
     CASE WHEN p.joined_at IS NOT NULL THEN 1 ELSE 0 END AS confirmedJoin,
     CASE WHEN p.attended_at IS NOT NULL THEN 1 ELSE 0 END AS confirmedAttendance,
-    a.name AS ambassador
+    a.name AS ambassador,a.code AS ambassador_code,a.code AS referralCode
     FROM participants p JOIN ambassadors a ON a.id=p.ambassador_id
-    WHERE a.campaign_id=? ORDER BY p.id DESC LIMIT 200`).all(cid);
+    WHERE a.campaign_id=? ORDER BY p.id DESC`).all(cid);
   const sales=db.prepare(`SELECT s.id,s.participant_id,s.payment_ref,s.evidence_ref,s.sale_cents,s.commission_cents,
     s.currency,s.status,s.payout_ref,s.verified_at,s.paid_at,p.name AS participant,a.name AS ambassador
     FROM participant_sales s JOIN participants p ON p.id=s.participant_id

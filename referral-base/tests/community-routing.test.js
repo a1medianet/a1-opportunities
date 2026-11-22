@@ -29,7 +29,28 @@ test('WhatsApp community only opens after owner config and only for an active am
   assert.equal(community.redirect(firstCode).url,invitation);
   assert.equal(community.redirect(firstCode).clicks,2);
   assert.equal(community.redirect(secondCode).clicks,1);
-  assert.equal(community.redirect(firstCode).clicks,3);
+  assert.equal(community.ownClicks(-1),0);
+  const firstId=store.db.prepare('SELECT id FROM ambassadors WHERE code=?').get(firstCode).id;
+  assert.equal(community.ownClicks(firstId),2);
+  const report=community.report();
+  assert.equal(report.communityClicks,3);
+  assert.equal(report.rows.find(x=>x.code===firstCode).communityClicks,2);
+  assert.equal(report.rows.find(x=>x.code===secondCode).communityClicks,1);
+  // Avoid counting test setup clicks at the wall-clock time of the running test.
+  store.db.prepare("UPDATE referral_community_clicks SET clicked_at='2026-11-20 17:59:59'").run();
+  // Historical test events are excluded; only events inside the fixed campaign window count.
+  store.db.prepare('INSERT INTO referral_link_visits(ambassador_id,visited_at) VALUES(?,?)').run(firstId,'2026-11-20 17:59:59');
+  store.db.prepare('INSERT INTO referral_link_visits(ambassador_id,visited_at) VALUES(?,?)').run(firstId,'2026-11-20 18:00:00');
+  store.db.prepare('INSERT INTO referral_link_visits(ambassador_id,visited_at) VALUES(?,?)').run(firstId,'2026-11-28 17:00:00');
+  store.db.prepare('INSERT INTO referral_community_clicks(ambassador_id,clicked_at) VALUES(?,?)').run(firstId,'2026-11-20 18:00:00');
+  store.db.prepare('INSERT INTO referral_community_clicks(ambassador_id,clicked_at) VALUES(?,?)').run(firstId,'2026-11-28 17:00:00');
+  const period=community.report();
+  assert.equal(period.period.startUtc,'2026-11-20T18:00:00Z');
+  assert.equal(period.period.visits,1);
+  assert.equal(period.period.communityClicks,1);
+  assert.equal(period.rows.find(x=>x.code===firstCode).campaignVisits,1);
+  assert.equal(period.rows.find(x=>x.code===firstCode).campaignClicks,1);
+  assert.equal(community.redirect(firstCode).clicks,5);
   assert.throws(()=>community.redirect('not-existing'),{status:404});
   community.configure({inviteUrl:invitation,enabled:false});
   assert.throws(()=>community.redirect(firstCode),{status:503});

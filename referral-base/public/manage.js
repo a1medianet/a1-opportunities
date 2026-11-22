@@ -33,7 +33,7 @@ function summaryMetric(label,value,description){
 function drawParticipants(){
  const term=$('participantSearch').value.trim().toLocaleLowerCase(),filter=$('participantFilter').value;
  displayedParticipants=participantCache.filter(p=>{
-  if(term&&!([p.id,p.name,p.phone,p.ambassador].join(' ').toLocaleLowerCase().includes(term)))return false;
+  if(term&&!([p.id,p.name,p.real_name,p.display_code,p.phone,p.ambassador].join(' ').toLocaleLowerCase().includes(term)))return false;
   if(filter==='joined')return Boolean(p.confirmedJoin);
   if(filter==='attended')return Boolean(p.confirmedAttendance);
   return filter==='all'||(filter==='clicked'?Boolean(p.clickedWhatsApp):p.status===filter);
@@ -42,7 +42,7 @@ function drawParticipants(){
  for(const p of displayedParticipants){
   const tr=document.createElement('tr');
   const evidence=[statuses[p.status]||p.status,p.confirmedJoin?'انضمام مؤكد':'انضمام غير مؤكد',p.confirmedAttendance?'حضور مؤكد':'حضور غير مؤكد'].join(' · ');
-  for(const v of [p.id+' — '+p.name,p.phone,p.ambassador,p.clickedWhatsApp?'فتح الرابط':'لم يفتحه',evidence])cell(tr,v);
+  for(const v of [(p.real_name||p.display_code||p.name),p.phone,p.ambassador+' ('+p.ambassador_code+')',new Date(p.registered_at.replace(' ','T')+'Z').toLocaleString('ar-LB',{timeZone:'Asia/Beirut',hour12:true}),p.clickedWhatsApp?'فتح الرابط':'لم يفتحه',evidence])cell(tr,v);
   const td=document.createElement('td');
   if(!p.confirmedJoin)action(td,'تأكيد الانضمام',()=>api('/api/admin/participants/status','POST',{id:p.id,status:'joined'}));
   if(!p.confirmedAttendance)action(td,'تأكيد الحضور',()=>api('/api/admin/participants/status','POST',{id:p.id,status:'attended'}));
@@ -53,7 +53,7 @@ function drawParticipants(){
 }
 function exportVisibleParticipants(){
  if(!key||$('ownerPanel').hidden)return;
- const records=[['الرقم','الاسم','واتساب','السفير','فتح رابط المجموعة','الحالة','التاريخ'],...displayedParticipants.map(p=>[p.id,p.name,p.phone,p.ambassador,p.clickedWhatsApp?'نعم':'لا',statuses[p.status]||p.status,p.registered_at])];
+ const records=[['الرقم','الاسم الداخلي','الاسم الحقيقي','رمز المشارك','واتساب','السفير','رمز السفير','فتح رابط المجموعة','الحالة','وقت التسجيل UTC','وقت التسجيل بيروت'],...displayedParticipants.map(p=>[p.id,p.name,p.real_name,p.display_code,p.phone,p.ambassador,p.ambassador_code,p.clickedWhatsApp?'نعم':'لا',statuses[p.status]||p.status,p.registered_at,new Date(p.registered_at.replace(' ','T')+'Z').toLocaleString('sv-SE',{timeZone:'Asia/Beirut',hour12:false})])];
  const safe=v=>'"'+String(v??'').replace(/^[=+@\-\t\r]/,"'").replace(/"/g,'""')+'"';
  const csv='\uFEFF'+records.map(row=>row.map(safe).join(',')).join('\r\n');
  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));

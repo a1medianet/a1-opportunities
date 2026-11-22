@@ -10,7 +10,7 @@ const makeToken=()=>randomBytes(32).toString('base64url');
 // When multi-tenant company IDs are added, scope these unique indexes by company_id.
 const identityName=v=>String(v||'').normalize('NFKD').replace(/\p{M}/gu,'').toLowerCase().replace(/\s+/g,' ').trim();
 const identityEmail=v=>String(v||'').trim().normalize('NFKC').toLowerCase();
-const identityPhone=v=>String(v||'').replace(/[() .\-\s]/g,'');
+const identityPhone=v=>{const cleaned=String(v||'').replace(/[() .\-\s]/g,'');return /^\+?[1-9]\d{7,14}$/.test(cleaned)?'+'+cleaned.replace(/^\+/,''):cleaned;};
 function httpError(message,status=400){const e=new Error(message);e.status=status;return e;}
 export function createAmbassadorOnboarding(db,{issueAmbassador}){
  db.exec(`CREATE TABLE IF NOT EXISTS ambassador_accounts(
@@ -69,13 +69,13 @@ export function createAmbassadorOnboarding(db,{issueAmbassador}){
    const fullName=String(input?.name||'').trim().replace(/\s+/g,' ');
    const email=String(input?.email||'').trim().toLowerCase();
    const country=String(input?.country||'').toUpperCase();
-   const phone=String(input?.phone||'').replace(/[() .-]/g,'');
+   const phone=identityPhone(input?.phone);
    const password=String(input?.password||'');
    const slug=String(input?.campaign||'').trim();
    if(!isLatinName(fullName))throw httpError('Please enter your full name in English (at least two words).');
    if(email.length>254||!emailPattern.test(email))throw httpError('Enter a valid email address.');
    if(!/^[A-Z]{2}$/.test(country))throw httpError('Select a valid country.');
-   if(!phonePattern.test(phone))throw httpError('Phone must include the country code, for example +961...');
+   if(!phonePattern.test(phone))throw httpError('Enter the country code and WhatsApp number, with or without + (e.g. 961...).');
    if(password.length<12||password.length>128||!/\d/.test(password)||!/[a-zA-Z]/.test(password))throw httpError('Use at least 12 characters, including letters and a number.');
    if(input?.agree!==true||!(/^ltp-legal-v[1-9]\d*$/.test(String(input?.termsVersion||''))||input?.termsVersion==='2026-11-17-v1'))throw httpError('Please accept the program terms and privacy notice.');
    const campaign=db.prepare("SELECT id,slug FROM campaigns WHERE slug=? AND active=1").get(slug);
@@ -170,7 +170,7 @@ export function createAmbassadorOnboarding(db,{issueAmbassador}){
   const current=session(sessionToken);
   if(!current)throw httpError('Sign-in required.',401);
   const phone=identityPhone(phoneInput);
-  if(!phonePattern.test(phone))throw httpError('Enter WhatsApp with country code (+961...).');
+  if(!phonePattern.test(phone))throw httpError('Enter WhatsApp with country code, with or without + (961...).');
   const phoneHash=digest(phone);
   db.exec('BEGIN IMMEDIATE');
   try{

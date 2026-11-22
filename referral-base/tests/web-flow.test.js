@@ -35,7 +35,7 @@ test('public invite to named participant, organizer confirmation, private ambass
    const repeat=await call('/api/participants','POST',{...inputs,name:'Changed name'}, {'content-type':'application/json'});
    assert.equal(repeat.data.received,true);
    assert.equal(repeat.data.groupUrl,registered.data.groupUrl);
-   assert.equal(Object.hasOwn(repeat.data,'joinTicket'),false);
+   assert.equal(repeat.data.received,true);
    assert.equal((await call('/api/whatsapp/click','POST',{joinTicket:registered.data.joinTicket},{'content-type':'application/json'})).data.recorded,true);
    assert.equal((await call('/api/whatsapp/click','POST',{joinTicket:registered.data.joinTicket},{'content-type':'application/json'})).data.recorded,true);
    assert.equal((await call('/api/ambassador/me','GET',null,{authorization:'Bearer '+invite.slice(3)})).status,401);

@@ -27,6 +27,15 @@ export function createParticipantFlow(db,issueJoinTicket=null,issueRedirectLink=
  // Configure campaign prefixes once. Never rewrite previously issued referral URLs.
  db.prepare("INSERT OR IGNORE INTO referral_code_prefixes(campaign_id,prefix) SELECT id,'LTP' FROM campaigns WHERE slug='linktutor-2026-11-28'").run();
  const participantColumns=db.prepare('PRAGMA table_info(participants)').all().map(x=>x.name);
+ if(!participantColumns.includes('display_code'))db.exec('ALTER TABLE participants ADD COLUMN display_code TEXT');
+ if(!participantColumns.includes('real_name'))db.exec('ALTER TABLE participants ADD COLUMN real_name TEXT');
+ db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_participant_display_code ON participants(campaign_id,display_code) WHERE display_code IS NOT NULL');
+ // Backfill in historical registration order, without changing original referral attribution.
+ const historical=db.prepare('SELECT p.id,p.campaign_id,a.code FROM participants p JOIN ambassadors a ON a.id=p.ambassador_id WHERE p.display_code IS NULL ORDER BY p.id').all();
+ for(const r of historical){
+   const n=db.prepare('SELECT COUNT(*) AS n FROM participants WHERE campaign_id=? AND ambassador_id=(SELECT id FROM ambassadors WHERE code=?) AND id<=?').get(r.campaign_id,r.code,r.id).n;
+   db.prepare('UPDATE participants SET display_code=? WHERE id=? AND display_code IS NULL').run('Amb_'+r.code+'_'+String(n).padStart(3,'0'),r.id);
+ }
  if(!participantColumns.includes('join_clicked_at'))db.exec('ALTER TABLE participants ADD COLUMN join_clicked_at TEXT');
  if(!participantColumns.includes('joined_at'))db.exec('ALTER TABLE participants ADD COLUMN joined_at TEXT');
  if(!participantColumns.includes('attended_at'))db.exec('ALTER TABLE participants ADD COLUMN attended_at TEXT');
@@ -94,6 +103,7 @@ export function createParticipantFlow(db,issueJoinTicket=null,issueRedirectLink=
  }
  const getAmbassador=code=>db.prepare("SELECT a.id,a.name,a.campaign_id FROM ambassadors a JOIN campaigns c ON a.campaign_id=c.id WHERE a.code=? AND a.status='approved' AND c.active=1").get(code);
  // A link visit is not a registration, a unique person, or a paid subscription.
+ function activeReferral(code){return Boolean(getAmbassador(String(code||'')));}
  function recordVisit(code){
    const ambassador=getAmbassador(String(code||''));
    if(!ambassador)return false;
@@ -102,18 +112,20 @@ export function createParticipantFlow(db,issueJoinTicket=null,issueRedirectLink=
  }
  function register(input){
    if(!input || input.consent!==true)throw Error('Consent required');
-   const name=String(input.name||'').trim().replace(/\s+/g,' ');
-   const phone=String(input.phone||'').replace(/[\s().-]/g,'');
-   if(name.length<2||name.length>120||!phonePattern.test(phone))throw Error('Enter a valid name and WhatsApp number');
+   const name=String(input.name||'').trim().replace(/\s+/g,' ')||'WhatsApp participant';
+   const supplied=String(input.phone||'').replace(/[\s().-]/g,'');
+   const phone=supplied.startsWith('+')?supplied:(supplied.startsWith('00')?'+'+supplied.slice(2):'+'+supplied);
+   if(name.length<2||name.length>120||!phonePattern.test(phone))throw Error('Enter a valid WhatsApp number');
    const ambassador=getAmbassador(String(input.code||''));
    if(!ambassador)throw Error('Invalid invitation');
    const phoneHash=digest(phone);
    const result=db.prepare('INSERT OR IGNORE INTO participants(campaign_id,ambassador_id,name,phone,phone_hash,consent) VALUES(?,?,?,?,?,1)')
      .run(ambassador.campaign_id,ambassador.id,name,phone,phoneHash);
+   if(result.changes){const id=Number(result.lastInsertRowid);const n=db.prepare('SELECT COUNT(*) AS n FROM participants WHERE campaign_id=? AND ambassador_id=? AND id<=?').get(ambassador.campaign_id,ambassador.id,id).n;db.prepare('UPDATE participants SET display_code=? WHERE id=?').run('Amb_'+String(input.code)+'_'+String(n).padStart(3,'0'),id);}
    if(result.changes)db.prepare("INSERT INTO audit(action,ref) VALUES('participant.registered',?)").run(String(result.lastInsertRowid));
    if(issueJoinTicket||issueRedirectLink){
      const row=db.prepare('SELECT id,name,ambassador_id FROM participants WHERE campaign_id=? AND phone_hash=?').get(ambassador.campaign_id,phoneHash);
-     if(row && row.ambassador_id===ambassador.id && row.name.toLowerCase()===name.toLowerCase())return {received:true,joinTicket:issueJoinTicket?issueJoinTicket(row.id):undefined,redirectPath:issueRedirectLink?issueRedirectLink(row.id):undefined};
+     if(row)return {received:true,duplicate:!result.changes,joinTicket:issueJoinTicket?issueJoinTicket(row.id):undefined,redirectPath:issueRedirectLink?issueRedirectLink(row.id):undefined};
    }
    return {received:true}; // no exposure of another ambassador's existing lead
  }
@@ -177,7 +189,7 @@ export function createParticipantFlow(db,issueJoinTicket=null,issueRedirectLink=
  }
  function ownOverview(token){const amb=ambassadorByToken(token);return amb?ownOverviewById(amb.id):null;}
  function ownerOverview(){
-   return db.prepare('SELECT p.id,p.name,p.phone,p.status,p.registered_at,CASE WHEN p.join_clicked_at IS NOT NULL THEN 1 ELSE 0 END AS clickedWhatsApp,CASE WHEN p.joined_at IS NOT NULL THEN 1 ELSE 0 END AS confirmedJoin,CASE WHEN p.attended_at IS NOT NULL THEN 1 ELSE 0 END AS confirmedAttendance,a.name AS ambassador FROM participants p JOIN ambassadors a ON a.id=p.ambassador_id ORDER BY p.id DESC LIMIT 200').all();
+   return db.prepare('SELECT p.id,p.name,p.real_name,p.display_code,p.phone,p.status,p.registered_at,a.code AS ambassador_code,CASE WHEN p.join_clicked_at IS NOT NULL THEN 1 ELSE 0 END AS clickedWhatsApp,CASE WHEN p.joined_at IS NOT NULL THEN 1 ELSE 0 END AS confirmedJoin,CASE WHEN p.attended_at IS NOT NULL THEN 1 ELSE 0 END AS confirmedAttendance,a.name AS ambassador FROM participants p JOIN ambassadors a ON a.id=p.ambassador_id ORDER BY p.id DESC LIMIT 200').all();
  }
  function updateStatus(id,status){
    if(status==='enrolled')throw Error('Paid enrollment requires verified payment');
@@ -195,5 +207,5 @@ export function createParticipantFlow(db,issueJoinTicket=null,issueRedirectLink=
      return {updated:true};
    }catch(error){db.exec('ROLLBACK');throw error;}
  }
- return {register,recordVisit,issueAmbassador,ensureCampaignZeroAmbassador,adminAmbassadors,setAmbassadorStatus,ambassadorByToken,ownOverview,ownOverviewById,ownerOverview,updateStatus,maskPhone};
+ return {register,recordVisit,activeReferral,issueAmbassador,ensureCampaignZeroAmbassador,adminAmbassadors,setAmbassadorStatus,ambassadorByToken,ownOverview,ownOverviewById,ownerOverview,updateStatus,maskPhone};
 }

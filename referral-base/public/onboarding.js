@@ -5,7 +5,7 @@ en:{
 program:'Ambassador Program',signin:'Sign In',pill:'LINKTUTOR PRO · AMBASSADOR NETWORK',
 headline:'Share. Track. Earn.',heroLead:'Share LinkTutor Pro and track your referrals.',
 point1:'Your personal link',point2:'Track registrations',point3:'Confirmed commissions',
-eventTitle:'Free online introduction',eventDetail:'Saturday, 28 November 2026 · 7:00 PM Beirut time · Zoom',
+eventTitle:'Free online introduction',eventDetail:'28 Nov 2026 · Beirut 7 PM · Makkah 8 PM · UTC 17:00 · Zoom',
 disclaimer:'Commission applies only to verified paid subscriptions after approval.',
 apply:'BECOME AN AMBASSADOR',formHeading:'Create your account',formIntro:'Enter your details to get your link.',
 fullName:'Full Name',email:'Email address',country:'Country',phone:'WhatsApp (with country code)',password:'Create password',chooseCountry:'Select country',
@@ -23,7 +23,7 @@ ar:{
 program:'برنامج السفراء',signin:'\u062f\u062e\u0648\u0644',pill:'LINKTUTOR PRO · برنامج السفراء',
 headline:'شارك. تابع. اربح.',heroLead:'شارك LinkTutor Pro وتابع إحالاتك.',
 point1:'رابطك الخاص',point2:'متابعة التسجيلات',point3:'العمولات المعتمدة',
-eventTitle:'لقاء تعريفي مجاني عبر الإنترنت',eventDetail:'السبت 28 نوفمبر 2026 · الساعة 7 مساءً بتوقيت بيروت · Zoom',
+eventTitle:'لقاء تعريفي مجاني عبر الإنترنت',eventDetail:'28 نوفمبر 2026 · بيروت 7 م · مكة 8 م · UTC 17:00 · Zoom',
 disclaimer:'تُحتسب العمولة بعد إثبات الاشتراك المدفوع واعتماده.',
 apply:'انضم إلى برنامج السفراء',formHeading:'أنشئ حسابك كسفير',formIntro:'أدخل بياناتك للحصول على رابطك.',
 fullName:'الاسم الكامل',email:'البريد الإلكتروني',country:'الدولة',phone:'واتساب (مع رمز الدولة)',password:'أنشئ كلمة مرور',chooseCountry:'اختر الدولة',
@@ -193,6 +193,15 @@ $('joinForm').addEventListener('submit',async event=>{
  event.preventDefault();if(!signupAvailabilityState||$('submitButton').disabled)return;
  $('formStatus').textContent='';
  if(!$('joinForm').reportValidity())return;
+ const phoneInput=$('joinForm').querySelector('[name=phone]');
+ const enteredPhone=String(phoneInput?.value||'').replace(/[() .-]/g,'');
+ const cleanedPhone=/^\+?[1-9]\d{7,14}$/.test(enteredPhone)?'+'+enteredPhone.replace(/^\+/,''):enteredPhone;
+ if(!/^\+[1-9]\d{7,14}$/.test(cleanedPhone)){
+  const message=lang==='ar'?'أدخل رقم واتساب مع رمز الدولة، مع + أو بدونها، مثل 961…':'Enter WhatsApp with the country code, with or without +, for example 961…';
+  $('formStatus').textContent=message;
+  phoneInput?.focus();return;
+ }
+ if(phoneInput)phoneInput.value=cleanedPhone;
  $('submitButton').disabled=true;
  $('formStatus').textContent=lang==='ar'?'جارٍ التحقق الأمني…':'Verifying browser security…';
  try{if(siteKey)await acquireSignupToken()}catch(err){$('formStatus').textContent=err.message||labels[lang].errorVerify;$('submitButton').disabled=false;return}
@@ -220,3 +229,23 @@ $('joinForm').addEventListener('submit',async event=>{
  }
 });
 translate();
+function startSessionCountdown(){
+ const boxes=[...document.querySelectorAll('[data-a1-countdown]')];
+ if(!boxes.length)return;
+ const target=Date.parse('2026-11-28T17:00:00Z');
+ function render(){
+  const ar=document.documentElement.lang!=='en';
+  const remaining=Math.max(0,Math.ceil((target-Date.now())/1000));
+  const values=[Math.floor(remaining/86400),Math.floor(remaining%86400/3600),Math.floor(remaining%3600/60),remaining%60];
+  const names=['days','hours','minutes','seconds'],units=ar?['أيام','ساعات','دقائق','ثوانٍ']:['Days','Hours','Min','Sec'];
+  for(const box of boxes){
+   box.querySelector('[data-a1-cd-heading]').textContent=remaining?(ar?'الوقت المتبقي للقاء':'Time until the session'):(ar?'حان موعد اللقاء التعريفي':'The session is scheduled to begin now');
+   box.querySelector('[data-a1-cd-foot]').textContent=ar?'السبت 28 نوفمبر · بيروت 7م · مكة 8م · UTC 17':'Sat 28 Nov · Beirut 7PM · Makkah 8PM · 17:00 UTC';
+   for(let i=0;i<4;i++){box.querySelector('[data-a1-cd-'+names[i]+']').textContent=String(values[i]).padStart(2,'0');box.querySelector('[data-a1-cd-unit='+names[i]+']').textContent=units[i];}
+  }
+ }
+ render();
+ setInterval(render,1000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+}
+startSessionCountdown();

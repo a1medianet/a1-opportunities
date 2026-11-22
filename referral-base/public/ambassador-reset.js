@@ -57,7 +57,8 @@ window.a1AmbassadorResetTurnstileLoaded=renderTurnstile;
  try{
   const res=await fetch('/api/ambassador/security/config',{cache:'no-store'});
   security=await res.json();
-  if(!res.ok||!security.recoveryReady||!security.turnstileEnabled){status.textContent=t.unavailable;$$('resetSubmit').disabled=true;return}
+  if(!res.ok||!security.recoveryReady){status.textContent=t.unavailable;$$('resetSubmit').disabled=true;updateTurnstileState('error');return}
+  if(!security.turnstileEnabled){$$('turnstileProgress').textContent='';$$('ambResetTurnstile').hidden=true;$$('turnstileRetry').hidden=true;return}
   renderTurnstile();
   let retries=0;const timer=setInterval(()=>{renderTurnstile();if(widgetId!==undefined||++retries>=40){clearInterval(timer);if(widgetId===undefined)updateTurnstileState('error')}},250);
  }catch{status.textContent=t.unavailable;$$('resetSubmit').disabled=true;updateTurnstileState('error')}
@@ -65,7 +66,7 @@ window.a1AmbassadorResetTurnstileLoaded=renderTurnstile;
 $$('ambResetForm').addEventListener('submit',async e=>{
  e.preventDefault();
  const m=$$('resetMessage');m.textContent='';
- if(!security.recoveryReady||!challenge){m.textContent=t.verification;return}
+ if(!security.recoveryReady||(security.turnstileEnabled&&!challenge)){m.textContent=t.verification;return}
  const p=$$('newAmbPassword').value;
  if(p!==$$('confirmAmbPassword').value){m.textContent=t.mismatch;return}
  if(p.length<12||p.length>128||!/[A-Za-z]/.test(p)||!/[0-9]/.test(p)){m.textContent=t.weak;return}

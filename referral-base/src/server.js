@@ -13,6 +13,7 @@ import {createLegalSettings} from './legal.js';
 import {createEnrollmentGate} from './enrollment-gate.js';
 import {createGroupPool} from './groups.js';
 import {createCommunityRouting} from './community.js';
+import {renderCommunityChoice} from './community-choice.js';
 import {createAmbassadorTestInvites} from './test-invites.js';
 import {createRateLimiter} from './rate-limit.js';
 import {createEmailService} from './email.js';
@@ -234,14 +235,29 @@ createServer(async(req,res)=>{
       const code=String(url.searchParams.get('ref')||'');
       return json(res,200,{available:community.enabledFor(code)});
     }
-    if(req.method==='GET' && /^\/community\/[A-Za-z0-9_-]{3,64}$/.test(url.pathname)){
+    if(req.method==='GET' && /^\/community\/registered\/[-_A-Za-z0-9]{43}$/.test(url.pathname)){
       if(!registerAllowed(req))return json(res,429,{error:'Please try again later'});
-      const destination=community.redirect(url.pathname.slice('/community/'.length));
-      res.writeHead(302,{'location':destination.url,'cache-control':'no-store','referrer-policy':'no-referrer','x-content-type-options':'nosniff'});
+      const destination=community.registeredRedirect(url.pathname.slice('/community/registered/'.length));
+      res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store, private','referrer-policy':'no-referrer','x-content-type-options':'nosniff','x-frame-options':'DENY','content-security-policy':"default-src 'self'; script-src 'self'; style-src 'unsafe-inline'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'"});
+      return res.end(renderCommunityChoice(destination.url));
+    }
+    if(req.method==='GET' && /^\/community\/[A-Za-z0-9_-]{3,64}$/.test(url.pathname)){
+      const code=url.pathname.slice('/community/'.length);
+      if(!community.enabledFor(code))return json(res,404,{error:'Invitation not found'});
+      res.writeHead(302,{'location':'/campaign?ref='+encodeURIComponent(code)+'#register','cache-control':'no-store','referrer-policy':'no-referrer','x-content-type-options':'nosniff'});
       return res.end();
     }
+    if(req.method==='POST' && url.pathname==='/api/community/register'){
+      if(!registerAllowed(req))return json(res,429,{error:'Please try again later'});
+      // Phone-only campaign registration: no visitor challenge; rate limiter remains enabled.
+      const input=await parse(req);
+      if(!community.enabledFor(String(input.code||'')))return json(res,404,{error:'Invitation unavailable'});
+      // No OTP or CAPTCHA for this campaign; commission requires later organizer payment confirmation.
+      const registration=participants.register(input);
+      return json(res,200,{received:true,groupUrl:registration.joinTicket?'/community/registered/'+registration.joinTicket:'',attributionConfirmed:Boolean(registration.joinTicket)});
+    }
     if(req.method==='GET' && url.pathname==='/api/legal')return json(res,200,legal.publicView());
-    if(req.method==='GET' && url.pathname==='/api/health') return json(res,200,{status:'ok',environment:process.env.NODE_ENV==='production'?'PRODUCTION':'LOCAL_REVIEW'}); if(req.method==='GET' && /^\/r\/[A-Za-z0-9_-]{3,64}$/.test(url.pathname)) {const code=url.pathname.slice(3);if(!participants.recordVisit(code))return json(res,404,{error:'Invitation not found'});res.writeHead(302,{location:(portalEnabled?'/campaign':'/')+'?ref='+encodeURIComponent(code),'cache-control':'no-store','referrer-policy':'no-referrer'});return res.end();} if(req.method==='GET' && url.pathname==='/api/config') return json(res,200,{title:'LinkTutor Pro — Ambassador Program'});
+    if(req.method==='GET' && url.pathname==='/api/health') return json(res,200,{status:'ok',environment:process.env.NODE_ENV==='production'?'PRODUCTION':'LOCAL_REVIEW'}); if(req.method==='GET' && /^\/r\/[A-Za-z0-9_-]{3,64}$/.test(url.pathname)) {const code=url.pathname.slice(3);if(!participants.activeReferral(code))return json(res,404,{error:'Invitation not found'});res.writeHead(302,{location:(portalEnabled?'/campaign':'/')+'?ref='+encodeURIComponent(code),'cache-control':'no-store','referrer-policy':'no-referrer'});return res.end();} if(req.method==='GET' && url.pathname==='/api/config') return json(res,200,{title:'LinkTutor Pro — Ambassador Program'});
     if(req.method==='POST' && url.pathname==='/api/register') return json(res,410,{error:'Please use the current registration form'});
     if(req.method==='GET' && url.pathname==='/api/program') return json(res,200,{registrationOpen:program.active().registrationOpen});
     // Participant verification is independent of the ambassador enrollment switch.
@@ -268,7 +284,7 @@ createServer(async(req,res)=>{
       if(!registerAllowed(req))return json(res,429,{error:'Too many requests.'});
       return json(res,200,onboarding.confirmEmailChange((await parse(req)).token));
     }
-    if(req.method==='GET' && url.pathname==='/api/ambassador/me') {const token=String(req.headers.authorization||'').replace(/^Bearer /i,'');const amb=participants.ambassadorByToken(token);const session=portalEnabled?onboarding.session(sessionCookie(req)):null;const id=amb?.id||session?.ambassador_id;if(!id)return json(res,401,{error:'Sign-in required'});const view=participants.ownOverviewById(id);return json(res,200,{...view,...commercial.ownSummary(id),profile:session?{nameAr:session.name_ar,nameEn:session.name_en,email:session.email,country:session.country,phone:session.phone}:null});}
+    if(req.method==='GET' && url.pathname==='/api/ambassador/me') {const token=String(req.headers.authorization||'').replace(/^Bearer /i,'');const amb=participants.ambassadorByToken(token);const session=portalEnabled?onboarding.session(sessionCookie(req)):null;const id=amb?.id||session?.ambassador_id;if(!id)return json(res,401,{error:'Sign-in required'});const view=participants.ownOverviewById(id);return json(res,200,{...view,...commercial.ownSummary(id),communityClicks:community.ownClicks(id),profile:session?{nameAr:session.name_ar,nameEn:session.name_en,email:session.email,country:session.country,phone:session.phone}:null});}
     if(req.method==='GET' && url.pathname==='/api/ambassador') return json(res,403,{error:'Sign-in required'});
     if(req.method==='GET' && url.pathname==='/api/public/opportunities') return json(res,200,{opportunities:opportunities.list().filter(o=>o.registration_status==='ready'&&o.active===1).map(o=>({slug:o.slug,title:o.title,eventDate:o.event_date,organizer:o.organizer,brandName:o.brand_name}))});
     if(url.pathname.startsWith('/api/admin/')){
@@ -286,6 +302,13 @@ createServer(async(req,res)=>{
         return json(res,200,enrollmentGate.update(body));
       }
       if(req.method==='GET'&&url.pathname==='/api/admin/community')return json(res,200,community.settings());
+      if(req.method==='GET'&&url.pathname==='/api/admin/participants/export.csv'){
+        const rows=store.db.prepare("SELECT p.id,p.phone,p.display_code,p.real_name,a.name AS ambassador_name,a.code AS ambassador_code,p.registered_at,p.status,p.join_clicked_at,p.joined_at,p.attended_at FROM participants p JOIN ambassadors a ON a.id=p.ambassador_id JOIN campaigns c ON c.id=p.campaign_id WHERE c.slug='linktutor-2026-11-28' ORDER BY p.registered_at,p.id").all();
+        const safe=v=>'"'+String(v??'').replace(/^[=+@\-\t\r\n]/,'\u0027$&').replace(/"/g,'""')+'"';
+        const csv='\uFEFF'+[['participant_id','whatsapp_phone','participant_code','real_name','first_ambassador_name','first_ambassador_code','registered_at_utc','registered_at_beirut','status','community_clicked_at_utc','confirmed_join_at_utc','confirmed_attendance_at_utc'],...rows.map(r=>[r.id,r.phone,r.display_code,r.real_name,r.ambassador_name,r.ambassador_code,r.registered_at,new Date(r.registered_at.replace(' ','T')+'Z').toLocaleString('sv-SE',{timeZone:'Asia/Beirut',hour12:false}),r.status,r.join_clicked_at,r.joined_at,r.attended_at])].map(row=>row.map(safe).join(',')).join('\r\n')+'\r\n';
+        res.writeHead(200,{'content-type':'text/csv; charset=utf-8','content-disposition':'attachment; filename="a1-opportunities-linktutor-referrals.csv"','cache-control':'no-store, private','x-content-type-options':'nosniff'});
+        return res.end(csv);
+      }
       if(req.method==='GET'&&url.pathname==='/api/admin/community/report')return json(res,200,community.report());
       if(req.method==='POST'&&url.pathname==='/api/admin/community')return json(res,200,community.configure(await parse(req)));
       if(req.method==='GET'&&url.pathname==='/api/admin/groups')return json(res,200,{groups:groupPool.list()});
@@ -326,9 +349,15 @@ createServer(async(req,res)=>{
     }
     if(req.method==='GET' && /^\/branding\/linktutor-(light|dark)\.svg$/.test(url.pathname)) {const asset=readFileSync(join(root,'public',url.pathname.slice(1)));res.writeHead(200,{'content-type':'image/svg+xml; charset=utf-8','cache-control':'public, max-age=3600','x-content-type-options':'nosniff'});return res.end(asset);}
     if(req.method==='GET' && /^\/fonts\/tajawal-(400|500|700|800)\.ttf$/.test(url.pathname)) {const font=readFileSync(join(root,'public',url.pathname.slice(1)));res.writeHead(200,{'content-type':'font/ttf','cache-control':'public, max-age=604800','x-content-type-options':'nosniff'});return res.end(font);}
-    if(req.method==='GET' && ['/','/index.html','/campaign','/onboarding.html','/onboarding.css','/onboarding.js','/verify','/verify.html','/verify.js','/terms','/terms-preview.html','/terms-preview.js','/preview-info.css','/styles.css','/app.js','/campaign.css','/campaign.js','/ambassador','/ambassador.html','/ambassador.js','/ambassador-preview.html','/ambassador-preview.css','/ambassador-preview.js','/ambassador-reset','/ambassador/reset','/ambassador-reset.html','/ambassador-reset.js','/ambassador-reset-enhancements.css','/manage-preview.html','/manage-preview.css','/manage-preview.js','/manage-locale.js','/owner-security-ui.js','/reset','/reset.html','/reset.js','/manage','/manage.html','/manage.js'].includes(url.pathname)) {
+    if(req.method==='GET' && ['/','/index.html','/campaign','/onboarding.html','/onboarding.css','/onboarding.js','/verify','/verify.html','/verify.js','/terms','/terms-preview.html','/terms-preview.js','/preview-info.css','/styles.css','/app.js','/community-choice.js','/campaign.css','/campaign.js','/ambassador','/ambassador.html','/ambassador.js','/ambassador-preview.html','/ambassador-preview.css','/ambassador-preview.js','/ambassador-reset','/ambassador/reset','/ambassador-reset.html','/ambassador-reset.js','/ambassador-reset-enhancements.css','/manage-preview.html','/manage-preview.css','/manage-preview.js','/manage-locale.js','/owner-security-ui.js','/reset','/reset.html','/reset.js','/manage','/manage.html','/manage.js'].includes(url.pathname)) {
       if(!portalEnabled && ['/onboarding.html','/onboarding.css','/onboarding.js','/verify','/verify.html','/verify.js','/terms','/terms-preview.html','/terms-preview.js','/preview-info.css','/reset','/reset.html','/reset.js','/ambassador-reset','/ambassador/reset','/ambassador-reset.html','/ambassador-reset.js'].includes(url.pathname))return json(res,404,{error:'Not found'});
       const name=url.pathname==='/'?(portalEnabled?'onboarding.html':'index.html'):url.pathname==='/campaign'?'index.html':url.pathname==='/reset'?'reset.html':url.pathname==='/ambassador-reset'?'ambassador-reset.html':url.pathname==='/ambassador/reset'?'ambassador-reset.html':url.pathname==='/verify'?'verify.html':url.pathname==='/terms'?'terms-preview.html':url.pathname==='/ambassador'?(portalEnabled?'ambassador-preview.html':'ambassador.html'):url.pathname==='/manage'?(portalEnabled?'manage-preview.html':'manage.html'):url.pathname.slice(1);
+      // Count the actual referral landing page once, not the /r redirect and landing twice.
+      // Internal page visits remain event counts; they are not unique visitors.
+      if((url.pathname==='/campaign'||(!portalEnabled&&(url.pathname==='/'||url.pathname==='/index.html')))&&url.searchParams.has('ref')){
+        const code=String(url.searchParams.get('ref')||'');
+        if(/^[A-Za-z0-9_-]{3,64}$/.test(code))participants.recordVisit(code);
+      }
       const content=readFileSync(join(root,'public',name));
       const type=name.endsWith('.css')?'text/css':name.endsWith('.js')?'text/javascript':'text/html';
       res.writeHead(200,{'content-type':type+'; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'no-referrer','content-security-policy':portalEnabled?"default-src 'self'; img-src 'self' data:; script-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'":"default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none' "});return res.end(content);
